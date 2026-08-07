@@ -1,0 +1,295 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-paper: #edebe4;
+  --color-ink: #0c0c0a;
+  --color-ink-muted: #7a7971;
+  --color-ink-faint: #c8c5bd;
+
+  --font-sans: "Albertus Nova", "Albertus", Georgia, serif;
+  --font-display: Copperplate, "Copperplate Gothic Light",
+    "Copperplate Gothic", fantasy;
+
+  --animate-fade-up: fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-fade-in: fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-scale-in: scale-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  :focus-visible {
+    outline: 1px solid color-mix(in srgb, var(--color-ink) 45%, transparent);
+    outline-offset: 3px;
+  }
+}
+
+/* Soft image reveal once loaded */
+.img-fade {
+  opacity: 0;
+  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.img-fade.is-loaded {
+  opacity: 1;
+}
+
+/* Horizontal chip scroller with fade + arrow hints */
+.chip-scroller {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.chip-scroll {
+  display: flex;
+  gap: 0.25rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  touch-action: pan-x;
+  width: 100%;
+  padding-inline: 0.15rem;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 1.75rem,
+    #000 calc(100% - 1.75rem),
+    transparent 100%
+  );
+}
+
+.chip-scroller:not(.has-left) .chip-scroll {
+  mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 1.75rem), transparent 100%);
+}
+
+.chip-scroller:not(.has-right) .chip-scroll {
+  mask-image: linear-gradient(to right, transparent 0, #000 1.75rem, #000 100%);
+}
+
+.chip-scroller:not(.has-left):not(.has-right) .chip-scroll {
+  mask-image: none;
+}
+
+.chip-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.scroll-hint-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid color-mix(in srgb, var(--color-ink) 18%, transparent);
+  background: color-mix(in srgb, var(--color-paper) 92%, transparent);
+  color: var(--color-ink);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-hint-arrow--left {
+  left: 0;
+}
+
+.scroll-hint-arrow--right {
+  right: 0;
+}
+
+.scroll-hint-arrow.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.scroll-hint-arrow:hover,
+.scroll-hint-arrow:focus-visible {
+  border-color: var(--color-ink);
+  background: var(--color-paper);
+}
+
+.scroll-hint-arrow:active {
+  transform: translateY(-50%) scale(0.96);
+}
+
+.scroll-hint-arrow__glyph {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  line-height: 1;
+  translate: 0 -0.05em;
+  animation: scroll-hint-nudge 1.8s ease-in-out infinite;
+}
+
+.scroll-hint-arrow--left .scroll-hint-arrow__glyph {
+  animation-name: scroll-hint-nudge-left;
+}
+
+.scroll-hint-arrow--right .scroll-hint-arrow__glyph {
+  animation-name: scroll-hint-nudge-right;
+}
+
+@keyframes scroll-hint-nudge-left {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-2px);
+  }
+}
+
+@keyframes scroll-hint-nudge-right {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(2px);
+  }
+}
+
+/* Mobile hamburger — three hairline bars */
+.menu-toggle {
+  align-content: center;
+  gap: 3.5px;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0.35rem 0.3rem;
+  border: 1px solid color-mix(in srgb, var(--color-ink) 18%, transparent);
+  background: transparent;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.menu-toggle:hover,
+.menu-toggle:focus-visible,
+.menu-toggle[aria-expanded="true"] {
+  border-color: var(--color-ink);
+}
+
+.menu-toggle__line {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: var(--color-ink);
+  transform-origin: center;
+  transition:
+    transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.2s ease;
+}
+
+.menu-toggle__line.is-open:nth-child(1) {
+  transform: translateY(4.5px) rotate(45deg);
+}
+
+.menu-toggle__line.is-open:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-toggle__line.is-open:nth-child(3) {
+  transform: translateY(-4.5px) rotate(-45deg);
+}
+
+/* Page shell padding under fixed header */
+.page-pad-work {
+  padding-top: calc(9rem + env(safe-area-inset-top, 0px));
+}
+
+.page-pad-simple {
+  padding-top: calc(3.75rem + env(safe-area-inset-top, 0px));
+}
+
+@media (min-width: 640px) {
+  .page-pad-work {
+    padding-top: calc(9.25rem + env(safe-area-inset-top, 0px));
+  }
+
+  .page-pad-simple {
+    padding-top: calc(4rem + env(safe-area-inset-top, 0px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .img-fade {
+    opacity: 1;
+  }
+}
