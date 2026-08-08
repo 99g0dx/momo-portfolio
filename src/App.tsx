@@ -10,7 +10,7 @@ import {
 import { projects, type Project } from "./data/projects"
 
 // ── Personalise everything here ────────────────────────────────────────────
-const NAME = "MOMO"
+const NAME = "Momo"
 const EMAIL = "hello@momolagos.com"
 const LOCATION = "Lagos · London"
 const SOCIAL = [
@@ -219,13 +219,13 @@ function Nav({
   }, [menuOpen, closeMenu])
 
   const pillCls = (active: boolean) =>
-    `font-sans text-[10px] sm:text-[9px] tracking-[0.16em] uppercase px-1.5 py-1 transition-opacity duration-200 shrink-0 inline-flex items-center ${
-      active ? "text-ink" : "text-ink/40 hover:text-ink"
+    `font-sans text-[11px] sm:text-[10.5px] tracking-[0.14em] uppercase px-1.5 py-1 transition-opacity duration-200 shrink-0 inline-flex items-center font-medium ${
+      active ? "text-ink" : "text-ink/38 hover:text-ink"
     }`
 
   const menuItemCls = (active: boolean) =>
-    `w-full text-left font-display text-[10px] tracking-[0.18em] uppercase px-3 py-2 border-b border-ink/10 transition-opacity ${
-      active ? "text-ink" : "text-ink/45 hover:text-ink"
+    `w-full text-left font-sans text-[11px] tracking-[0.14em] uppercase px-3 py-2.5 border-b border-ink/10 transition-opacity font-medium ${
+      active ? "text-ink" : "text-ink/40 hover:text-ink"
     }`
 
   return (
@@ -237,7 +237,7 @@ function Nav({
         <button
           type="button"
           onClick={() => go("work")}
-          className="font-display text-[11px] sm:text-[12px] tracking-[0.22em] sm:tracking-[0.26em] uppercase text-ink whitespace-nowrap shrink-0 transition-opacity hover:opacity-60 absolute left-1/2 -translate-x-1/2 z-10"
+          className="font-display text-[19px] sm:text-[22px] tracking-[-0.02em] font-light text-ink whitespace-nowrap shrink-0 transition-opacity hover:opacity-55 absolute left-1/2 -translate-x-1/2 z-10"
         >
           {NAME}
         </button>
@@ -315,12 +315,12 @@ function WorkGrid({ filtered, onOpen }: { filtered: Project[]; onOpen: (p: Proje
             />
           </div>
           <div className="flex items-baseline justify-between gap-2">
-            <p className="font-display text-[10px] sm:text-[9px] tracking-[0.2em] uppercase text-ink leading-snug">
+            <p className="font-display text-[17px] sm:text-[18px] tracking-[-0.015em] text-ink leading-snug">
               {p.title}
             </p>
-            <p className="font-sans text-[10px] sm:text-[9px] text-ink-muted shrink-0">{p.year}</p>
+            <p className="font-sans text-[11px] text-ink-muted shrink-0 font-normal">{p.year}</p>
           </div>
-          <p className="font-sans text-[10px] sm:text-[9px] text-ink-muted mt-1 tracking-wide uppercase">
+          <p className="font-sans text-[10.5px] text-ink-muted mt-1.5 tracking-[0.12em] uppercase font-medium">
             {p.category}
           </p>
           <div className="mt-3 h-px bg-ink/10" />
@@ -357,14 +357,14 @@ function WorkList({ filtered, onOpen }: { filtered: Project[]; onOpen: (p: Proje
               }}
             />
             <div className="relative z-10 flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-4 py-4 sm:py-5 border-b border-ink/10 min-h-14">
-              <p className="font-display text-[13px] sm:text-[12px] tracking-[0.18em] uppercase text-ink flex-1 leading-none">
+              <p className="font-display text-[19px] sm:text-[21px] tracking-[-0.02em] text-ink flex-1 leading-[1.1]">
                 {p.title}
               </p>
               <div className="flex items-center gap-3 sm:gap-4">
-                <p className="font-sans text-[10px] sm:text-[9px] tracking-wider uppercase text-ink-muted shrink-0">
+                <p className="font-sans text-[10.5px] tracking-[0.12em] uppercase text-ink-muted shrink-0 font-medium">
                   {p.category}
                 </p>
-                <p className="font-sans text-[10px] sm:text-[9px] text-ink-muted shrink-0 sm:w-10 sm:text-right">
+                <p className="font-sans text-[11px] text-ink-muted shrink-0 sm:w-10 sm:text-right">
                   {p.year}
                 </p>
                 <span
@@ -396,10 +396,10 @@ function WorkIndex({
       {filtered.map((p) => (
         <div key={p.id}>
           <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4 mb-3 sm:mb-4">
-            <h2 className="font-display text-[13px] sm:text-[14px] tracking-[0.18em] uppercase text-ink leading-none">
+            <h2 className="font-display text-[22px] sm:text-[26px] tracking-[-0.02em] text-ink leading-none">
               {p.title}
             </h2>
-            <p className="font-sans text-[10px] sm:text-[9px] tracking-[0.2em] uppercase text-ink-muted shrink-0">
+            <p className="font-sans text-[10.5px] tracking-[0.12em] uppercase text-ink-muted shrink-0 font-medium">
               {p.category}
               <span className="mx-1.5 opacity-50">·</span>
               {p.year}
@@ -449,8 +449,8 @@ function WorkSection({
     activeCategory === "All" ? projects : projects.filter((p) => p.category === activeCategory)
 
   const tagCls = (active: boolean) =>
-    `font-sans text-[10px] sm:text-[9px] tracking-[0.16em] uppercase px-1.5 py-1 transition-opacity duration-200 shrink-0 inline-flex items-center ${
-      active ? "text-ink" : "text-ink/40 hover:text-ink"
+    `font-sans text-[11px] sm:text-[10.5px] tracking-[0.14em] uppercase px-1.5 py-1 transition-opacity duration-200 shrink-0 inline-flex items-center font-medium ${
+      active ? "text-ink" : "text-ink/38 hover:text-ink"
     }`
 
   return (
@@ -518,7 +518,7 @@ function GalleryOverlay({
         >
           ← Close
         </button>
-        <p className="font-display text-[11px] tracking-[0.2em] uppercase text-ink">
+        <p className="font-display text-[17px] tracking-[-0.015em] text-ink">
           {project.title}
         </p>
         <span className="w-16" />
@@ -527,23 +527,25 @@ function GalleryOverlay({
       <div className="px-4 sm:px-6 md:px-8 py-6 sm:py-8 pb-20">
         <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="font-display text-[15px] sm:text-[14px] tracking-[0.2em] uppercase text-ink leading-none">
+            <h1 className="font-display text-[32px] sm:text-[40px] tracking-[-0.025em] text-ink leading-[1.05]">
               {project.title}
             </h1>
             {project.description && (
-              <p className="mt-3 font-sans text-[12px] text-ink-muted leading-relaxed max-w-md">
+              <p className="mt-4 font-sans text-[14px] sm:text-[15px] text-ink/70 leading-7 max-w-md font-light">
                 {project.description}
               </p>
             )}
           </div>
-          <p className="font-sans text-[10px] text-ink-muted tracking-wider uppercase sm:text-right">
+          <p className="font-sans text-[10.5px] text-ink-muted tracking-[0.12em] uppercase sm:text-right font-medium">
             {project.category}
             <span className="mx-1.5 opacity-40">·</span>
             {project.year}
             {project.client && (
               <>
                 <br />
-                <span>{project.client}</span>
+                <span className="normal-case tracking-normal font-normal text-ink/55">
+                  {project.client}
+                </span>
               </>
             )}
           </p>
@@ -590,24 +592,24 @@ function AboutView() {
             {BIO.map((para, i) => (
               <p
                 key={i}
-                className={`font-sans text-[13px] sm:text-[12px] md:text-[11px] leading-7 text-paper/75 ${i > 0 ? "mt-4" : ""}`}
+                className={`font-sans text-[15px] sm:text-[16px] leading-[1.8] text-paper/78 font-light ${i > 0 ? "mt-5" : ""}`}
               >
                 {para}
               </p>
             ))}
             <div className="mt-8 pt-7 border-t border-paper/10">
-              <p className="font-display text-[8px] tracking-[0.3em] uppercase text-paper/35 mb-2">
+              <p className="font-sans text-[10px] tracking-[0.16em] uppercase text-paper/40 mb-2 font-medium">
                 Services
               </p>
-              <p className="font-sans text-[12px] sm:text-[11px] text-paper/60 leading-relaxed">
+              <p className="font-sans text-[13px] sm:text-[14px] text-paper/65 leading-relaxed font-light">
                 {SERVICES.join(" · ")}
               </p>
             </div>
             <div className="mt-5 pt-5 border-t border-paper/10">
-              <p className="font-display text-[8px] tracking-[0.3em] uppercase text-paper/35 mb-2">
+              <p className="font-sans text-[10px] tracking-[0.16em] uppercase text-paper/40 mb-2 font-medium">
                 Selected Clients
               </p>
-              <p className="font-sans text-[12px] sm:text-[11px] text-paper/60 leading-relaxed">{CLIENTS}</p>
+              <p className="font-sans text-[13px] sm:text-[14px] text-paper/65 leading-relaxed font-light">{CLIENTS}</p>
             </div>
           </div>
         </div>
@@ -621,18 +623,18 @@ function GidaView() {
   return (
     <Section id="gida" className="bg-[#e6e2d8] px-5 sm:px-8 md:px-12 py-16 sm:py-24">
       <div className="max-w-2xl mx-auto">
-        <p className="font-display text-[8px] tracking-[0.32em] uppercase text-ink-muted mb-6">
+        <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-ink-muted mb-6 font-medium">
           GIDA Journal
         </p>
-        <h1 className="font-display text-[clamp(1.5rem,3.5vw,2.4rem)] tracking-[0.1em] uppercase text-ink leading-[1.2] mb-4">
+        <h1 className="font-display text-[clamp(2.35rem,6vw,3.75rem)] tracking-[-0.03em] font-light text-ink leading-[1.08] mb-5">
           Home-grown
         </h1>
-        <p className="font-sans text-[14px] leading-7 text-ink/80 mb-6">
+        <p className="font-sans text-[15px] sm:text-[16px] leading-[1.75] text-ink/78 mb-6 font-light max-w-xl">
           GIDA means home-grown in Hausa. It is an annual print anthology prioritising works by
           creatives, writers, and thinkers based and living in Africa — an archival space for
           cultural expression, region by region.
         </p>
-        <p className="font-sans text-[13px] leading-7 text-ink/70 mb-10">
+        <p className="font-sans text-[15px] leading-[1.75] text-ink/68 mb-10 font-light max-w-xl">
           Founded by Momo Hassan-Odukale, GIDA documents fashion, craft, architecture, and the
           visual arts as a living record of African creativity.
         </p>
@@ -662,29 +664,31 @@ function ConsultancyView({ onContact }: { onContact: () => void }) {
   return (
     <Section id="consultancy" className="bg-[#f1efe8] px-5 sm:px-8 md:px-12 py-16 sm:py-24">
       <div className="max-w-2xl mx-auto">
-        <p className="font-display text-[8px] tracking-[0.32em] uppercase text-ink-muted mb-6">
+        <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-ink-muted mb-6 font-medium">
           GIDA Solutions
         </p>
-        <h1 className="font-display text-[clamp(1.4rem,3vw,2rem)] tracking-[0.12em] uppercase text-ink leading-[1.2] mb-5">
+        <h1 className="font-display text-[clamp(2.25rem,5vw,3.4rem)] tracking-[-0.03em] text-ink leading-[1.08] mb-5">
           Consultancy
         </h1>
-        <p className="font-sans text-[14px] leading-7 text-ink/75 mb-10 max-w-lg">
+        <p className="font-sans text-[15px] sm:text-[16px] leading-[1.75] text-ink/72 mb-12 max-w-lg font-light">
           Clear, considered creative support for brands, institutions, and cultural partners.
         </p>
         <ol className="border-t border-ink/15">
           {services.map((service, i) => (
             <li
               key={service.name}
-              className="grid grid-cols-[2.5rem_1fr] gap-4 py-5 border-b border-ink/10"
+              className="grid grid-cols-[2.75rem_1fr] gap-4 py-6 border-b border-ink/10"
             >
-              <span className="font-display text-[11px] text-ink-muted pt-0.5">
+              <span className="font-sans text-[11px] text-ink-muted pt-2 tabular-nums font-medium tracking-[0.06em]">
                 {String(i + 1).padStart(2, "0")}
               </span>
               <div>
-                <h2 className="font-display text-[13px] tracking-[0.16em] uppercase text-ink mb-2">
+                <h2 className="font-display text-[24px] sm:text-[28px] tracking-[-0.025em] text-ink mb-2 leading-none">
                   {service.name}
                 </h2>
-                <p className="font-sans text-[13px] leading-6 text-ink/70">{service.description}</p>
+                <p className="font-sans text-[14px] sm:text-[15px] leading-7 text-ink/68 font-light max-w-md">
+                  {service.description}
+                </p>
               </div>
             </li>
           ))}
@@ -721,19 +725,19 @@ function ContactView({ onNav }: { onNav: (id: SectionId) => void }) {
     <Section id="contact" className="min-h-[100dvh] flex flex-col bg-paper">
       <div className="px-5 sm:px-8 md:px-12 py-14 sm:py-20 flex-1">
         <div className="max-w-xl mx-auto">
-          <p className="font-display text-[8px] tracking-[0.3em] uppercase text-ink-muted mb-5">
+          <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-ink-muted mb-5 font-medium">
             Contact
           </p>
-          <h1 className="font-display uppercase text-ink mb-3 tracking-[0.08em] text-[clamp(1.5rem,4vw,2.25rem)]">
+          <h1 className="font-display text-[clamp(2.35rem,5.5vw,3.5rem)] text-ink mb-4 tracking-[-0.03em] leading-[1.05]">
             Get in touch
           </h1>
-          <p className="font-sans text-[13px] text-ink/70 leading-relaxed mb-10 max-w-md">
+          <p className="font-sans text-[15px] sm:text-[16px] text-ink/70 leading-[1.75] mb-12 max-w-md font-light">
             For commissions, GIDA, consultancy, or press — send a note or reach out on Instagram.
           </p>
 
           <form onSubmit={onSubmit} className="space-y-5 mb-12">
             <label className="block">
-              <span className="font-display text-[8px] tracking-[0.24em] uppercase text-ink-muted">
+              <span className="font-sans text-[10px] tracking-[0.16em] uppercase text-ink-muted font-medium">
                 Name
               </span>
               <input
@@ -743,7 +747,7 @@ function ContactView({ onNav }: { onNav: (id: SectionId) => void }) {
               />
             </label>
             <label className="block">
-              <span className="font-display text-[8px] tracking-[0.24em] uppercase text-ink-muted">
+              <span className="font-sans text-[10px] tracking-[0.16em] uppercase text-ink-muted font-medium">
                 Email
               </span>
               <input
@@ -754,7 +758,7 @@ function ContactView({ onNav }: { onNav: (id: SectionId) => void }) {
               />
             </label>
             <label className="block">
-              <span className="font-display text-[8px] tracking-[0.24em] uppercase text-ink-muted">
+              <span className="font-sans text-[10px] tracking-[0.16em] uppercase text-ink-muted font-medium">
                 Message
               </span>
               <textarea
@@ -774,7 +778,7 @@ function ContactView({ onNav }: { onNav: (id: SectionId) => void }) {
 
           <div className="border-t border-ink/15 pt-8 space-y-5">
             <div>
-              <p className="font-display text-[8px] tracking-[0.24em] uppercase text-ink-muted mb-2">
+              <p className="font-sans text-[10px] tracking-[0.16em] uppercase text-ink-muted mb-2 font-medium">
                 Email
               </p>
               <a
@@ -785,7 +789,7 @@ function ContactView({ onNav }: { onNav: (id: SectionId) => void }) {
               </a>
             </div>
             <div>
-              <p className="font-display text-[8px] tracking-[0.24em] uppercase text-ink-muted mb-3">
+              <p className="font-sans text-[10px] tracking-[0.16em] uppercase text-ink-muted mb-3 font-medium">
                 Social
               </p>
               <ul className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-2">
@@ -916,7 +920,7 @@ function Lightbox({
             </button>
           </>
         )}
-        <div className="absolute bottom-4 sm:bottom-5 left-1/2 -translate-x-1/2 font-display text-[8px] tracking-[0.3em] uppercase text-paper/30">
+        <div className="absolute bottom-4 sm:bottom-5 left-1/2 -translate-x-1/2 font-sans text-[10px] tracking-[0.14em] uppercase text-paper/35 font-medium">
           {index + 1} / {images.length}
         </div>
       </div>

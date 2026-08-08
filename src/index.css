@@ -1,4 +1,7 @@
-@import 'tailwindcss';
+/* Fontshare — Boska (display) + Satoshi (UI) */
+@import url("https://api.fontshare.com/v2/css?f[]=boska@300,400,500,700&f[]=satoshi@300,400,500,700&display=swap");
+
+@import "tailwindcss";
 
 @theme {
   --color-paper: #edebe4;
@@ -6,9 +9,8 @@
   --color-ink-muted: #7a7971;
   --color-ink-faint: #c8c5bd;
 
-  --font-sans: "Albertus Nova", "Albertus", Georgia, serif;
-  --font-display: Copperplate, "Copperplate Gothic Light",
-    "Copperplate Gothic", fantasy;
+  --font-sans: "Satoshi", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display: "Boska", "Times New Roman", Times, serif;
 
   --animate-fade-up: fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-fade-in: fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -58,9 +60,25 @@
     min-height: 100dvh;
     background: var(--color-paper);
     color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-weight: 400;
+    letter-spacing: 0.005em;
+    font-optical-sizing: auto;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+  }
+
+  .font-display {
+    font-family: var(--font-display);
+    font-feature-settings: "liga" 1, "kern" 1;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+  }
+
+  .font-sans {
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01" 1, "kern" 1;
   }
 
   button,
@@ -181,9 +199,10 @@
 }
 
 .scroll-hint-arrow__glyph {
-  font-family: var(--font-display);
-  font-size: 1.05rem;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
   line-height: 1;
+  font-weight: 500;
   translate: 0 -0.05em;
   animation: scroll-hint-nudge 1.8s ease-in-out infinite;
 }
