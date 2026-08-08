@@ -3,6 +3,7 @@ import {
   useEffect,
   useCallback,
   useRef,
+  type FormEvent,
   type ReactNode,
   type TouchEvent,
 } from "react"
@@ -10,12 +11,13 @@ import { projects, type Project } from "./data/projects"
 
 // ── Personalise everything here ────────────────────────────────────────────
 const NAME = "MOMO"
-const MONOGRAM = "YN"
-const EMAIL = "hello@yourname.com"
-const INSTAGRAM = "@yourhandle"
-const AGENCY_NAME = "[Agency Name]"
-const AGENCY_EMAIL = "agency@example.com"
-const LOCATION = "Based in [City] · Available Worldwide"
+const EMAIL = "hello@momolagos.com"
+const LOCATION = "Lagos · London"
+const SOCIAL = [
+  { label: "Instagram", handle: "momo.mho", href: "https://instagram.com/momo.mho" },
+  { label: "Studio", handle: "momo.lagos", href: "https://instagram.com/momo.lagos" },
+  { label: "GIDA", handle: "gidajournal", href: "https://instagram.com/gidajournal" },
+] as const
 const BIO = [
   "Your Name is a photographer and creative director based in [City]. With over a decade of experience, their work sits at the intersection of fashion, culture, and image.",
   "They have collaborated with leading publications and brands including [Magazine], [Magazine], [Brand], and [Brand], bringing a precise, concept-led approach to every commission.",
@@ -217,15 +219,13 @@ function Nav({
   }, [menuOpen, closeMenu])
 
   const pillCls = (active: boolean) =>
-    `font-sans text-[10px] sm:text-[9px] tracking-[0.16em] uppercase px-3 py-2 sm:py-1.5 border transition-colors duration-200 shrink-0 min-h-10 sm:min-h-0 inline-flex items-center ${
-      active
-        ? "bg-ink text-paper border-ink"
-        : "border-ink/20 text-ink hover:border-ink active:bg-ink/5"
+    `font-sans text-[10px] sm:text-[9px] tracking-[0.16em] uppercase px-1.5 py-1 transition-opacity duration-200 shrink-0 inline-flex items-center ${
+      active ? "text-ink" : "text-ink/40 hover:text-ink"
     }`
 
   const menuItemCls = (active: boolean) =>
-    `w-full text-left font-display text-[10px] tracking-[0.18em] uppercase px-3 py-2 border-b border-ink/10 transition-colors ${
-      active ? "bg-ink text-paper" : "text-ink hover:bg-ink/5 active:bg-ink/8"
+    `w-full text-left font-display text-[10px] tracking-[0.18em] uppercase px-3 py-2 border-b border-ink/10 transition-opacity ${
+      active ? "text-ink" : "text-ink/45 hover:text-ink"
     }`
 
   return (
@@ -242,7 +242,7 @@ function Nav({
           {NAME}
         </button>
 
-        <div className="hidden md:flex gap-1 shrink-0 flex-wrap justify-end max-w-[58%]">
+        <div className="hidden md:flex gap-4 shrink-0 flex-wrap justify-end max-w-[58%]">
           {SECTIONS.map((item) => (
             <button
               key={item.id}
@@ -449,10 +449,8 @@ function WorkSection({
     activeCategory === "All" ? projects : projects.filter((p) => p.category === activeCategory)
 
   const tagCls = (active: boolean) =>
-    `font-sans text-[10px] sm:text-[9px] tracking-[0.16em] uppercase px-2.5 py-2 sm:py-1 border transition-colors duration-200 shrink-0 min-h-9 sm:min-h-0 inline-flex items-center ${
-      active
-        ? "bg-ink text-paper border-ink"
-        : "border-ink/15 text-ink hover:border-ink active:bg-ink/5"
+    `font-sans text-[10px] sm:text-[9px] tracking-[0.16em] uppercase px-1.5 py-1 transition-opacity duration-200 shrink-0 inline-flex items-center ${
+      active ? "text-ink" : "text-ink/40 hover:text-ink"
     }`
 
   return (
@@ -471,7 +469,7 @@ function WorkSection({
               </button>
             ))}
           </ChipScroller>
-          <div className="flex gap-1 shrink-0 pl-1.5 ml-0.5 border-l border-ink/15">
+          <div className="flex gap-3 shrink-0 pl-3 ml-1 border-l border-ink/15">
             {(["grid", "list", "index"] as WorkMode[]).map((m) => (
               <button key={m} type="button" onClick={() => onWorkMode(m)} className={tagCls(mode === m)}>
                 {m}
@@ -704,78 +702,106 @@ function ConsultancyView({ onContact }: { onContact: () => void }) {
 }
 
 // ─── Contact View ─────────────────────────────────────────────────────────────
-function Monogram() {
-  return (
-    <div className="relative flex items-center justify-center shrink-0 size-[110px] sm:size-[140px]">
-      <div className="absolute inset-0 rounded-full border-2 border-ink" />
-      <div className="absolute inset-3 sm:inset-4 rounded-full border-2 border-ink" />
-      <span className="font-display text-lg sm:text-xl tracking-[0.15em] text-ink">{MONOGRAM}</span>
-    </div>
-  )
-}
-
 function ContactView({ onNav }: { onNav: (id: SectionId) => void }) {
+  const [sent, setSent] = useState(false)
+
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const data = new FormData(e.currentTarget)
+    const name = String(data.get("name") || "")
+    const email = String(data.get("email") || "")
+    const message = String(data.get("message") || "")
+    const subject = encodeURIComponent(`Enquiry from ${name || "website"}`)
+    const body = encodeURIComponent(`${message}\n\n— ${name}\n${email}`)
+    window.location.href = `mailto:${EMAIL}?subject=${subject}&body=${body}`
+    setSent(true)
+  }
+
   return (
     <Section id="contact" className="min-h-[100dvh] flex flex-col bg-paper">
-      <div className="px-5 sm:px-8 py-14 sm:py-20 flex flex-col sm:flex-row items-start gap-8 sm:gap-12 md:gap-14 flex-1">
-        <Monogram />
-
-        <div className="flex-1 min-w-0 w-full">
-          <p className="font-display text-[8px] tracking-[0.3em] uppercase text-ink-muted mb-5 flex items-center gap-2">
-            <span className="inline-block w-2 h-2 border border-ink-muted" />
+      <div className="px-5 sm:px-8 md:px-12 py-14 sm:py-20 flex-1">
+        <div className="max-w-xl mx-auto">
+          <p className="font-display text-[8px] tracking-[0.3em] uppercase text-ink-muted mb-5">
             Contact
           </p>
-
-          <h1 className="font-display uppercase text-ink mb-5 leading-[1.05] tracking-[0.06em] text-[clamp(1.75rem,6vw,4.5rem)]">
-            Engage,
-            <br />
-            Collaborate,
-            <br />
-            Commission
+          <h1 className="font-display uppercase text-ink mb-3 tracking-[0.08em] text-[clamp(1.5rem,4vw,2.25rem)]">
+            Get in touch
           </h1>
-
-          <p className="font-sans text-[12px] sm:text-[11px] text-ink-muted leading-relaxed mb-8 max-w-xs">
-            For project discussions, commissions, or representation, reach out below.
+          <p className="font-sans text-[13px] text-ink/70 leading-relaxed mb-10 max-w-md">
+            For commissions, GIDA, consultancy, or press — send a note or reach out on Instagram.
           </p>
 
-          <div className="border-t border-ink/15">
-            <div className="grid grid-cols-1 sm:grid-cols-3 sm:divide-x divide-ink/15">
-              <div className="py-5 sm:pr-6 border-b sm:border-b-0 border-ink/10">
-                <p className="font-display text-[8px] tracking-[0.28em] uppercase text-ink-muted mb-3">
-                  Direct
-                </p>
-                <a
-                  href={`mailto:${EMAIL}`}
-                  className="font-sans text-[12px] sm:text-[11px] text-ink hover:opacity-40 transition-opacity break-all"
-                >
-                  {EMAIL}
-                </a>
-              </div>
-              <div className="py-5 sm:px-6 border-b sm:border-b-0 border-ink/10">
-                <p className="font-display text-[8px] tracking-[0.28em] uppercase text-ink-muted mb-3">
-                  Social
-                </p>
-                <a
-                  href={`https://instagram.com/${INSTAGRAM.replace("@", "")}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-sans text-[12px] sm:text-[11px] text-ink hover:opacity-40 transition-opacity"
-                >
-                  {INSTAGRAM}
-                </a>
-              </div>
-              <div className="py-5 sm:pl-6">
-                <p className="font-display text-[8px] tracking-[0.28em] uppercase text-ink-muted mb-3">
-                  Representation
-                </p>
-                <p className="font-sans text-[12px] sm:text-[11px] text-ink mb-1">{AGENCY_NAME}</p>
-                <a
-                  href={`mailto:${AGENCY_EMAIL}`}
-                  className="font-sans text-[11px] sm:text-[10px] text-ink-muted hover:text-ink transition-colors break-all"
-                >
-                  {AGENCY_EMAIL}
-                </a>
-              </div>
+          <form onSubmit={onSubmit} className="space-y-5 mb-12">
+            <label className="block">
+              <span className="font-display text-[8px] tracking-[0.24em] uppercase text-ink-muted">
+                Name
+              </span>
+              <input
+                name="name"
+                required
+                className="mt-2 w-full bg-transparent border-b border-ink/20 py-2.5 font-sans text-[14px] text-ink outline-none focus:border-ink transition-colors"
+              />
+            </label>
+            <label className="block">
+              <span className="font-display text-[8px] tracking-[0.24em] uppercase text-ink-muted">
+                Email
+              </span>
+              <input
+                name="email"
+                type="email"
+                required
+                className="mt-2 w-full bg-transparent border-b border-ink/20 py-2.5 font-sans text-[14px] text-ink outline-none focus:border-ink transition-colors"
+              />
+            </label>
+            <label className="block">
+              <span className="font-display text-[8px] tracking-[0.24em] uppercase text-ink-muted">
+                Message
+              </span>
+              <textarea
+                name="message"
+                required
+                rows={4}
+                className="mt-2 w-full bg-transparent border-b border-ink/20 py-2.5 font-sans text-[14px] text-ink outline-none focus:border-ink transition-colors resize-y min-h-[6rem]"
+              />
+            </label>
+            <button
+              type="submit"
+              className="font-sans text-[11px] tracking-[0.2em] uppercase text-ink hover:opacity-45 transition-opacity"
+            >
+              {sent ? "Opening mail…" : "Send message →"}
+            </button>
+          </form>
+
+          <div className="border-t border-ink/15 pt-8 space-y-5">
+            <div>
+              <p className="font-display text-[8px] tracking-[0.24em] uppercase text-ink-muted mb-2">
+                Email
+              </p>
+              <a
+                href={`mailto:${EMAIL}`}
+                className="font-sans text-[14px] text-ink hover:opacity-45 transition-opacity"
+              >
+                {EMAIL}
+              </a>
+            </div>
+            <div>
+              <p className="font-display text-[8px] tracking-[0.24em] uppercase text-ink-muted mb-3">
+                Social
+              </p>
+              <ul className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-2">
+                {SOCIAL.map((item) => (
+                  <li key={item.handle}>
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-sans text-[13px] text-ink hover:opacity-45 transition-opacity"
+                    >
+                      {item.label} · @{item.handle}
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
@@ -783,7 +809,7 @@ function ContactView({ onNav }: { onNav: (id: SectionId) => void }) {
 
       <div className="border-t border-ink/10 px-5 sm:px-8 py-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
         <p className="font-sans text-[9px] text-ink-muted tracking-wider">
-          © {new Date().getFullYear()} {NAME.toUpperCase()} · ALL RIGHTS RESERVED
+          © {new Date().getFullYear()} {NAME} · ALL RIGHTS RESERVED
         </p>
         <div className="flex flex-wrap gap-4 sm:gap-5">
           {SECTIONS.map((item) => (
