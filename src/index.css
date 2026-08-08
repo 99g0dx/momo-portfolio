@@ -276,6 +276,45 @@
   transform: translateY(-4.5px) rotate(-45deg);
 }
 
+/* GIDA archival image sequence */
+.gida-strip {
+  display: flex;
+  gap: 1px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-snap-type: x proximity;
+  width: 100%;
+}
+
+.gida-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.gida-strip__frame {
+  flex: 0 0 58vw;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--color-ink) 8%, transparent);
+  scroll-snap-align: start;
+}
+
+@media (min-width: 640px) {
+  .gida-strip__frame {
+    flex: 0 0 32vw;
+  }
+}
+
+@media (min-width: 1024px) {
+  .gida-strip__frame {
+    flex: 1 1 0;
+    min-width: 11rem;
+    aspect-ratio: 4 / 5;
+  }
+}
+
 /* Page shell padding under fixed header */
 .page-pad-work {
   padding-top: calc(9rem + env(safe-area-inset-top, 0px));

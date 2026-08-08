@@ -77,19 +77,23 @@ export const projects: Project[] = [
   },
   {
     id: "campaign-structured-2023",
-    title: "Structured",
+    title: "Davido's 5ive Album artwork",
     category: "Campaign",
     year: "2023",
-    client: "[Brand Name]",
-    description: "SS23 campaign. Shot on location in Milan over two days.",
-    coverImage:
-      "https://images.unsplash.com/photo-1613915617430-8ab0fd7c6baf",
+    client: "Davido",
+    description:
+      "Campaign and concept imagery for Davido's 5ive album artwork — desert sets, costume design, and stills.",
+    coverImage: "/images/davido-5ive/01.jpg",
     images: [
-      "https://images.unsplash.com/photo-1662532577856-e8ee8b138a8b",
-      "https://images.unsplash.com/photo-1659522761084-79196b64abe4",
-      "https://images.unsplash.com/photo-1610765431323-d88c88a2b2c8",
-      "https://images.unsplash.com/photo-1551113006-731674fbb3ff",
-      "https://images.unsplash.com/flagged/photo-1570733117311-d990c3816c47",
+      "/images/davido-5ive/01.jpg",
+      "/images/davido-5ive/02.jpg",
+      "/images/davido-5ive/03.jpg",
+      "/images/davido-5ive/04.jpg",
+      "/images/davido-5ive/05.jpg",
+      "/images/davido-5ive/06.jpg",
+      "/images/davido-5ive/07.jpg",
+      "/images/davido-5ive/08.jpg",
+      "/images/davido-5ive/09.jpg",
     ],
   },
   {

@@ -8,9 +8,18 @@ import {
   type TouchEvent,
 } from "react"
 import { projects, type Project } from "./data/projects"
+import {
+  gidaAbout,
+  gidaFeatures,
+  gidaGuide,
+  gidaInstagram,
+  gidaProgramming,
+  gidaSubscribeUrl,
+  gidaVolumes,
+} from "./data/gida"
 
 // ── Personalise everything here ────────────────────────────────────────────
-const NAME = "Momo"
+const NAME = "MOMO"
 const EMAIL = "hello@momolagos.com"
 const LOCATION = "Lagos · London"
 const SOCIAL = [
@@ -621,32 +630,244 @@ function AboutView() {
 
 // ─── GIDA View ────────────────────────────────────────────────────────────────
 function GidaView() {
+  const [subscribed, setSubscribed] = useState(false)
+
+  const onSubscribe = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const data = new FormData(e.currentTarget)
+    const email = String(data.get("email") || "").trim()
+    const firstName = String(data.get("firstName") || "").trim()
+    const url = new URL(gidaSubscribeUrl)
+    if (email) url.searchParams.set("email", email)
+    if (firstName) url.searchParams.set("first_name", firstName)
+    window.open(url.toString(), "_blank", "noopener,noreferrer")
+    setSubscribed(true)
+  }
+
   return (
-    <Section id="gida" className="bg-[#e6e2d8] px-5 sm:px-8 md:px-12 py-16 sm:py-24">
-      <div className="max-w-2xl mx-auto">
-        <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-ink-muted mb-6 font-medium">
-          GIDA Journal
-        </p>
-        <h1 className="font-display text-[clamp(2.35rem,6vw,3.75rem)] tracking-[-0.03em] font-light text-ink leading-[1.08] mb-5">
-          Home-grown
-        </h1>
-        <p className="font-sans text-[15px] sm:text-[16px] leading-[1.75] text-ink/78 mb-6 font-light max-w-xl">
-          GIDA means home-grown in Hausa. It is an annual print anthology prioritising works by
-          creatives, writers, and thinkers based and living in Africa — an archival space for
-          cultural expression, region by region.
-        </p>
-        <p className="font-sans text-[15px] leading-[1.75] text-ink/68 mb-10 font-light max-w-xl">
-          Founded by Momo Hassan-Odukale, GIDA documents fashion, craft, architecture, and the
-          visual arts as a living record of African creativity.
-        </p>
-        <a
-          href="https://instagram.com/gidajournal"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="font-sans text-[12px] text-ink underline underline-offset-4 decoration-ink/30 hover:decoration-ink"
-        >
-          @gidajournal
-        </a>
+    <Section id="gida" className="bg-[#e6e2d8] py-16 sm:py-24">
+      <div className="px-5 sm:px-8 md:px-12">
+        <div className="max-w-2xl mx-auto animate-fade-up">
+          <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-ink-muted mb-5 font-medium">
+            GIDA
+          </p>
+          <p className="font-sans text-[12px] sm:text-[13px] tracking-[0.04em] text-ink/55 mb-4 font-light">
+            <span className="font-display text-[15px] sm:text-[16px] tracking-[-0.02em] text-ink/80 not-italic">
+              {gidaAbout.pronunciation}
+            </span>
+            <span className="mx-2.5 text-ink/25">·</span>
+            {gidaAbout.meaning}
+          </p>
+          <h1 className="font-display text-[clamp(2.6rem,8vw,4.25rem)] tracking-[-0.04em] font-light text-ink leading-[0.95] mb-8">
+            GIDA
+          </h1>
+          <div className="space-y-5 mb-6">
+            {gidaAbout.paragraphs.map((paragraph) => (
+              <p
+                key={paragraph.slice(0, 48)}
+                className="font-sans text-[15px] sm:text-[16px] leading-[1.8] text-ink/78 font-light"
+              >
+                {paragraph}
+              </p>
+            ))}
+          </div>
+          <p className="font-sans text-[13px] sm:text-[14px] leading-relaxed text-ink/50 font-light">
+            {gidaAbout.founder}
+          </p>
+        </div>
+      </div>
+
+      <div className="px-5 sm:px-8 md:px-12 mt-16 sm:mt-20">
+        <div className="max-w-2xl mx-auto animate-fade-up">
+          <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-ink-muted mb-8 font-medium">
+            Journal
+          </p>
+          <ol className="border-t border-ink/15">
+            {gidaVolumes.map((volume) => (
+              <li
+                key={volume.id}
+                className="grid grid-cols-[4.75rem_1fr_auto] sm:grid-cols-[5.5rem_1fr_auto] gap-x-4 sm:gap-x-5 py-4 border-b border-ink/10 items-start"
+              >
+                <div className="aspect-[3/4] overflow-hidden bg-ink/8">
+                  <FadeImg
+                    src={volume.coverImage}
+                    alt={volume.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="min-w-0 pt-0.5">
+                  <p className="font-sans text-[11px] text-ink-muted tabular-nums tracking-[0.06em] font-medium mb-1.5">
+                    {volume.label}
+                  </p>
+                  {volume.href ? (
+                    <a
+                      href={volume.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-display text-[18px] sm:text-[20px] tracking-[-0.02em] text-ink leading-snug underline underline-offset-4 decoration-ink/20 hover:decoration-ink"
+                    >
+                      {volume.title}
+                    </a>
+                  ) : (
+                    <p className="font-display text-[18px] sm:text-[20px] tracking-[-0.02em] text-ink leading-snug">
+                      {volume.title}
+                    </p>
+                  )}
+                  {volume.year ? (
+                    <p className="font-sans text-[11px] text-ink/45 mt-1 tracking-[0.04em]">
+                      {volume.year}
+                    </p>
+                  ) : null}
+                </div>
+                {volume.href ? (
+                  <a
+                    href={volume.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-sans text-[10px] tracking-[0.12em] uppercase text-ink font-medium pt-1 underline underline-offset-4 decoration-ink/25 hover:decoration-ink"
+                  >
+                    Purchase
+                  </a>
+                ) : (
+                  <span className="font-sans text-[10px] tracking-[0.12em] uppercase text-ink-muted font-medium pt-1">
+                    {volume.status}
+                  </span>
+                )}
+              </li>
+            ))}
+          </ol>
+
+          <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-ink-muted mt-12 mb-8 font-medium">
+            Programming
+          </p>
+          <ol className="border-t border-ink/15">
+            {gidaProgramming.map((item) => (
+              <li
+                key={item.id}
+                className="grid grid-cols-[5.5rem_1fr_auto] sm:grid-cols-[6.5rem_1fr_auto] gap-x-4 py-4 border-b border-ink/10 items-baseline"
+              >
+                <span className="font-sans text-[11px] text-ink-muted tracking-[0.06em] font-medium">
+                  {item.kind}
+                </span>
+                {item.href ? (
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-display text-[18px] sm:text-[20px] tracking-[-0.02em] text-ink leading-snug underline underline-offset-4 decoration-ink/20 hover:decoration-ink"
+                  >
+                    {item.title}
+                  </a>
+                ) : (
+                  <p className="font-display text-[18px] sm:text-[20px] tracking-[-0.02em] text-ink leading-snug">
+                    {item.title}
+                  </p>
+                )}
+                <span className="font-sans text-[11px] text-ink/45 tabular-nums">{item.year}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+
+      {gidaFeatures.map((feature, featureIndex) => (
+        <div key={feature.id} className={featureIndex === 0 ? "mt-16 sm:mt-20" : "mt-16 sm:mt-24"}>
+          <div className="px-5 sm:px-8 md:px-12">
+            <div className="max-w-2xl mx-auto mb-8 sm:mb-10 animate-fade-up">
+              <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-ink-muted mb-5 font-medium">
+                {feature.label}
+              </p>
+              <h2 className="font-display text-[clamp(1.85rem,4.5vw,2.75rem)] tracking-[-0.03em] text-ink leading-[1.08] mb-5">
+                {feature.title}
+              </h2>
+              <p className="font-sans text-[15px] sm:text-[16px] leading-[1.8] text-ink/78 font-light mb-5">
+                {feature.body}
+              </p>
+              <a
+                href={feature.readMoreHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-sans text-[13px] text-ink underline underline-offset-4 decoration-ink/30 hover:decoration-ink"
+              >
+                Read more…
+              </a>
+            </div>
+          </div>
+          <div className="gida-strip" role="list" aria-label={feature.title}>
+            {feature.images.map((src, i) => (
+              <div key={src} role="listitem" className="gida-strip__frame">
+                <FadeImg
+                  src={src}
+                  alt={`${feature.title} ${i + 1}`}
+                  loading={featureIndex === 0 && i === 0 ? "eager" : "lazy"}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      <div className="px-5 sm:px-8 md:px-12 mt-16 sm:mt-24">
+        <div className="max-w-2xl mx-auto animate-fade-up">
+          <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-ink-muted mb-5 font-medium">
+            Newsletter
+          </p>
+          <h2 className="font-display text-[clamp(1.85rem,4.5vw,2.75rem)] tracking-[-0.03em] text-ink leading-[1.08] mb-6">
+            {gidaGuide.title}
+          </h2>
+          <div className="space-y-5 mb-10">
+            {gidaGuide.paragraphs.map((paragraph) => (
+              <p
+                key={paragraph.slice(0, 48)}
+                className="font-sans text-[15px] sm:text-[16px] leading-[1.8] text-ink/78 font-light"
+              >
+                {paragraph}
+              </p>
+            ))}
+          </div>
+
+          <form onSubmit={onSubscribe} className="max-w-md space-y-5 mb-8">
+            <label className="block">
+              <span className="font-sans text-[10px] tracking-[0.16em] uppercase text-ink-muted font-medium">
+                Email Address *
+              </span>
+              <input
+                name="email"
+                type="email"
+                required
+                autoComplete="email"
+                className="mt-2 w-full bg-transparent border-b border-ink/20 py-2.5 font-sans text-[14px] text-ink outline-none focus:border-ink transition-colors"
+              />
+            </label>
+            <label className="block">
+              <span className="font-sans text-[10px] tracking-[0.16em] uppercase text-ink-muted font-medium">
+                First Name *
+              </span>
+              <input
+                name="firstName"
+                required
+                autoComplete="given-name"
+                className="mt-2 w-full bg-transparent border-b border-ink/20 py-2.5 font-sans text-[14px] text-ink outline-none focus:border-ink transition-colors"
+              />
+            </label>
+            <button
+              type="submit"
+              className="font-sans text-[11px] tracking-[0.2em] uppercase text-ink hover:opacity-45 transition-opacity"
+            >
+              {subscribed ? "Opening subscribe…" : "Subscribe →"}
+            </button>
+          </form>
+
+          <a
+            href={gidaInstagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-sans text-[12px] text-ink underline underline-offset-4 decoration-ink/30 hover:decoration-ink"
+          >
+            @gidajournal
+          </a>
+        </div>
       </div>
     </Section>
   )
