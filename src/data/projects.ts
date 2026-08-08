@@ -56,7 +56,7 @@ export const projects: Project[] = [
   {
     id: "portrait-quiet-2024",
     title: "Temi Otedola & Mr Eazi",
-    category: "Portrait",
+    category: "Styling",
     year: "2024",
     client: "Temi Otedola & Mr Eazi",
     description:
@@ -83,7 +83,7 @@ export const projects: Project[] = [
     client: "Davido",
     description:
       "Campaign and concept imagery for Davido's 5ive album artwork — desert sets, costume design, and stills.",
-    coverImage: "/images/davido-5ive/01.jpg",
+    coverImage: "/images/davido-5ive/02.jpg",
     images: [
       "/images/davido-5ive/01.jpg",
       "/images/davido-5ive/02.jpg",
@@ -97,53 +97,41 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "fineart-veil-2023",
-    title: "Veil & Form",
-    category: "Fine Art",
-    year: "2023",
-    description:
-      "An ongoing series examining concealment, revelation, and the threshold between.",
-    coverImage:
-      "https://images.unsplash.com/photo-1762504013915-c1faf57f291b",
-    images: [
-      "https://images.unsplash.com/photo-1731589802956-b4693dae884b",
-      "https://images.unsplash.com/photo-1779912217733-0b7df75b5083",
-      "https://images.unsplash.com/photo-1506863530036-1efeddceb993",
-      "https://images.unsplash.com/photo-1613915617430-8ab0fd7c6baf",
-    ],
-  },
-  {
     id: "creative-dir-material-2023",
-    title: "Material Gestures",
+    title: "The Audition",
     category: "Creative Direction",
-    year: "2023",
-    client: "[Brand Name]",
+    year: "2025",
+    client: "Daniel Obaweya",
     description:
-      "Art and creative direction for the AW23 lookbook. Concept, casting, and production.",
-    coverImage:
-      "https://images.unsplash.com/photo-1662532577856-e8ee8b138a8b",
+      "The first in a series exploring performance and connection. A collaboration between Momo Hassan-Odukale & Daniel Obaweya, featuring SS25 collections.",
+    coverImage: "/images/the-audition/02.jpg",
     images: [
-      "https://images.unsplash.com/photo-1659522761084-79196b64abe4",
-      "https://images.unsplash.com/photo-1613915617430-8ab0fd7c6baf",
-      "https://images.unsplash.com/photo-1551113006-731674fbb3ff",
-      "https://images.unsplash.com/photo-1779912218007-1a7854ba4f23",
-      "https://images.unsplash.com/photo-1766951087359-fe48ea4f2796",
+      "/images/the-audition/01.jpg",
+      "/images/the-audition/02.jpg",
+      "/images/the-audition/03.jpg",
     ],
   },
   {
     id: "personal-between-2022",
-    title: "Between Frames",
-    category: "Personal Work",
-    year: "2022",
+    title: "The Starting Line",
+    category: "Styling",
+    year: "2025",
+    client: "Lisa Folawiyo Studio",
     description:
-      "Documentary-style images made between commissions — the edges of attention.",
-    coverImage:
-      "https://images.unsplash.com/photo-1766951087359-fe48ea4f2796",
+      "Lisa Folawiyo Studio Coll 1 2025: a vibrant ode to life as a race, blending bold prints, handcrafted embellishments, and cultural motifs like the Nigerian game Ayo. This collection celebrates the drive, ambition, and joy of the journey, reminding us that while the goal matters, the race is meant to be enjoyed. Styled by GIDA founder and Editor-in-Chief Momo Hassan-Odukale, shot by Jurnee Peterchukwu for GIDA Journal, with event concept and coordination by EE Collective.",
+    coverImage: "/images/the-starting-line/01.jpg",
     images: [
-      "https://images.unsplash.com/photo-1779911915399-aeaaa1153847",
-      "https://images.unsplash.com/photo-1594751684241-bcef815d5a57",
-      "https://images.unsplash.com/photo-1571893714939-85a8e97c329d",
-      "https://images.unsplash.com/photo-1676439777386-d67cd2b32e7b",
+      "/images/the-starting-line/01.jpg",
+      "/images/the-starting-line/02.jpg",
+      "/images/the-starting-line/03.jpg",
+      "/images/the-starting-line/04.jpg",
+      "/images/the-starting-line/05.jpg",
+      "/images/the-starting-line/06.jpg",
+      "/images/the-starting-line/07.jpg",
+      "/images/the-starting-line/08.jpg",
+      "/images/the-starting-line/09.jpg",
+      "/images/the-starting-line/10.jpg",
+      "/images/the-starting-line/11.jpg",
     ],
   },
 ]
