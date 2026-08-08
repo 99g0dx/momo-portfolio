@@ -49,16 +49,29 @@ const SECTIONS: { id: SectionId; label: string }[] = [
 ]
 
 function headerOffset() {
+  const header = document.querySelector("header")
+  if (header instanceof HTMLElement && header.offsetHeight > 0) return header.offsetHeight
   const raw = getComputedStyle(document.documentElement).getPropertyValue("--header-h")
   const value = parseFloat(raw)
   return Number.isFinite(value) ? value : 56
 }
 
+let navLock: SectionId | null = null
+let navLockTimer = 0
+
 function scrollToSection(id: SectionId) {
   const el = document.getElementById(id)
   if (!el) return
+  navLock = id
+  window.clearTimeout(navLockTimer)
   const top = el.getBoundingClientRect().top + window.scrollY - headerOffset()
   window.scrollTo({ top, behavior: "smooth" })
+  const clear = () => {
+    navLock = null
+    window.removeEventListener("scrollend", clear)
+  }
+  window.addEventListener("scrollend", clear, { once: true })
+  navLockTimer = window.setTimeout(clear, 900)
 }
 
 const imgUrl = (src: string, w: number, h?: number) => {
@@ -344,6 +357,7 @@ function Nav({
               key={item.id}
               type="button"
               onClick={() => go(item.id)}
+              aria-current={activeSection === item.id ? "page" : undefined}
               className={pillCls(activeSection === item.id)}
             >
               {item.label}
@@ -375,6 +389,7 @@ function Nav({
                 key={item.id}
                 type="button"
                 onClick={() => go(item.id)}
+                aria-current={activeSection === item.id ? "page" : undefined}
                 className={`${menuItemCls(activeSection === item.id)} ${i === SECTIONS.length - 1 ? "border-b-0" : ""}`}
               >
                 {item.label}
@@ -1279,33 +1294,59 @@ export default function App() {
     }
   }, [lightbox])
 
-  // Scroll spy — highlight nav as sections enter view
+  // Scroll spy — highlight whichever section owns the reading line (~1/3 down the view)
   useEffect(() => {
     const ids = SECTIONS.map((s) => s.id)
-    const elements = ids
-      .map((id) => document.getElementById(id))
-      .filter((el): el is HTMLElement => Boolean(el))
 
-    if (elements.length === 0) return
+    const apply = (next: SectionId) => {
+      setActiveSection((prev) => (prev === next ? prev : next))
+    }
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)
-        const top = visible[0]
-        if (top?.target?.id) {
-          setActiveSection(top.target.id as SectionId)
+    const update = () => {
+      if (navLock) {
+        apply(navLock)
+        return
+      }
+
+      const header = document.querySelector("header")
+      const headerH = header instanceof HTMLElement ? header.offsetHeight : headerOffset()
+      const y = Math.min(
+        window.innerHeight - 16,
+        Math.max(headerH + 24, headerH + (window.innerHeight - headerH) * 0.38),
+      )
+      const x = Math.max(8, Math.floor(window.innerWidth * 0.45))
+
+      if (header instanceof HTMLElement) header.style.pointerEvents = "none"
+      const hit = document.elementFromPoint(x, y)
+      if (header instanceof HTMLElement) header.style.pointerEvents = ""
+
+      const section = hit instanceof Element ? hit.closest("section[id]") : null
+      if (section?.id && ids.includes(section.id as SectionId)) {
+        apply(section.id as SectionId)
+        return
+      }
+
+      let current: SectionId = ids[0]
+      for (const id of ids) {
+        const el = document.getElementById(id)
+        if (!el) continue
+        const rect = el.getBoundingClientRect()
+        if (rect.top <= y && rect.bottom > y) {
+          current = id
+          break
         }
-      },
-      {
-        rootMargin: "-20% 0px -55% 0px",
-        threshold: [0.1, 0.25, 0.5],
-      },
-    )
+        if (rect.top <= y) current = id
+      }
+      apply(current)
+    }
 
-    elements.forEach((el) => observer.observe(el))
-    return () => observer.disconnect()
+    update()
+    window.addEventListener("scroll", update, { passive: true })
+    window.addEventListener("resize", update)
+    return () => {
+      window.removeEventListener("scroll", update)
+      window.removeEventListener("resize", update)
+    }
   }, [])
 
   return (
