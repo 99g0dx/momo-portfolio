@@ -48,12 +48,16 @@ const SECTIONS: { id: SectionId; label: string }[] = [
   { id: "contact", label: "Contact" },
 ]
 
-const HEADER_OFFSET = 72
+function headerOffset() {
+  const raw = getComputedStyle(document.documentElement).getPropertyValue("--header-h")
+  const value = parseFloat(raw)
+  return Number.isFinite(value) ? value : 56
+}
 
 function scrollToSection(id: SectionId) {
   const el = document.getElementById(id)
   if (!el) return
-  const top = el.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET
+  const top = el.getBoundingClientRect().top + window.scrollY - headerOffset()
   window.scrollTo({ top, behavior: "smooth" })
 }
 
@@ -115,7 +119,7 @@ function Section({
   className?: string
 }) {
   return (
-    <section id={id} className={`scroll-mt-[4.5rem] ${className}`}>
+    <section id={id} className={`scroll-mt-[var(--header-h)] ${className}`}>
       {children}
     </section>
   )
@@ -192,21 +196,102 @@ function ChipScroller({ children }: { children: ReactNode }) {
 }
 
 // ─── Nav ─────────────────────────────────────────────────────────────────────
+function WorkToolbar({
+  mode,
+  activeCategory,
+  onWorkMode,
+  onCategory,
+}: {
+  mode: WorkMode
+  activeCategory: string
+  onWorkMode: (m: WorkMode) => void
+  onCategory: (c: string) => void
+}) {
+  const tagCls = (active: boolean) =>
+    `font-sans text-[11px] sm:text-[10.5px] tracking-[0.14em] uppercase px-1.5 py-1 transition-opacity duration-200 shrink-0 inline-flex items-center font-medium ${
+      active ? "text-ink" : "text-ink/38 hover:text-ink"
+    }`
+
+  return (
+    <div className="px-2 sm:px-4 md:px-6 py-2 flex items-center gap-2 sm:gap-3">
+      <ChipScroller>
+        {allCategories.map((cat) => (
+          <button
+            key={cat}
+            type="button"
+            onClick={() => onCategory(cat)}
+            className={tagCls(activeCategory === cat)}
+          >
+            {cat}
+          </button>
+        ))}
+      </ChipScroller>
+      <div className="flex gap-3 shrink-0 pl-3 ml-1 border-l border-ink/15">
+        {(["grid", "list", "index"] as WorkMode[]).map((m) => (
+          <button key={m} type="button" onClick={() => onWorkMode(m)} className={tagCls(mode === m)}>
+            {m}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 function Nav({
   activeSection,
   onNav,
+  workMode,
+  activeCategory,
+  onWorkMode,
+  onCategory,
 }: {
   activeSection: SectionId
   onNav: (id: SectionId) => void
+  workMode: WorkMode
+  activeCategory: string
+  onWorkMode: (m: WorkMode) => void
+  onCategory: (c: string) => void
 }) {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [workChrome, setWorkChrome] = useState(true)
   const menuRef = useRef<HTMLDivElement>(null)
+  const headerRef = useRef<HTMLElement>(null)
   const closeMenu = useCallback(() => setMenuOpen(false), [])
 
   const go = (id: SectionId) => {
     onNav(id)
     closeMenu()
   }
+
+  useEffect(() => {
+    const header = headerRef.current
+    if (!header) return
+    const sync = () => {
+      document.documentElement.style.setProperty("--header-h", `${header.offsetHeight}px`)
+    }
+    sync()
+    const observer = new ResizeObserver(sync)
+    observer.observe(header)
+    return () => observer.disconnect()
+  }, [workChrome])
+
+  useEffect(() => {
+    const update = () => {
+      const about = document.getElementById("about")
+      if (!about) {
+        setWorkChrome(activeSection === "work")
+        return
+      }
+      setWorkChrome(about.getBoundingClientRect().top > 88)
+    }
+    update()
+    window.addEventListener("scroll", update, { passive: true })
+    window.addEventListener("resize", update)
+    return () => {
+      window.removeEventListener("scroll", update)
+      window.removeEventListener("resize", update)
+    }
+  }, [activeSection])
 
   useEffect(() => {
     if (!menuOpen) return
@@ -237,7 +322,10 @@ function Nav({
     }`
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 bg-paper/96 backdrop-blur-md pt-[env(safe-area-inset-top,0px)]">
+    <header
+      ref={headerRef}
+      className="fixed top-0 left-0 right-0 z-40 bg-paper pt-[env(safe-area-inset-top,0px)]"
+    >
       <div
         className="relative flex items-center justify-end gap-3 px-4 sm:px-6 md:px-8 py-3 sm:py-3.5"
         ref={menuRef}
@@ -296,6 +384,17 @@ function Nav({
         )}
       </div>
       <div className="h-px bg-ink/10" />
+      {workChrome ? (
+        <>
+          <WorkToolbar
+            mode={workMode}
+            activeCategory={activeCategory}
+            onWorkMode={onWorkMode}
+            onCategory={onCategory}
+          />
+          <div className="h-px bg-ink/10" />
+        </>
+      ) : null}
     </header>
   )
 }
@@ -443,50 +542,17 @@ function WorkSection({
   activeCategory,
   onOpen,
   onLightbox,
-  onWorkMode,
-  onCategory,
 }: {
   mode: WorkMode
   activeCategory: string
   onOpen: (p: Project) => void
   onLightbox: (src: string, all: string[]) => void
-  onWorkMode: (m: WorkMode) => void
-  onCategory: (c: string) => void
 }) {
   const filtered =
     activeCategory === "All" ? projects : projects.filter((p) => p.category === activeCategory)
 
-  const tagCls = (active: boolean) =>
-    `font-sans text-[11px] sm:text-[10.5px] tracking-[0.14em] uppercase px-1.5 py-1 transition-opacity duration-200 shrink-0 inline-flex items-center font-medium ${
-      active ? "text-ink" : "text-ink/38 hover:text-ink"
-    }`
-
   return (
-    <Section id="work" className="pt-[4.5rem] pb-16 sm:pb-24">
-      <div className="sticky top-[calc(3.75rem+env(safe-area-inset-top,0px))] z-30 bg-paper/96 backdrop-blur-md border-b border-ink/10">
-        <div className="px-2 sm:px-4 md:px-6 py-2 flex items-center gap-2 sm:gap-3">
-          <ChipScroller>
-            {allCategories.map((cat) => (
-              <button
-                key={cat}
-                type="button"
-                onClick={() => onCategory(cat)}
-                className={tagCls(activeCategory === cat)}
-              >
-                {cat}
-              </button>
-            ))}
-          </ChipScroller>
-          <div className="flex gap-3 shrink-0 pl-3 ml-1 border-l border-ink/15">
-            {(["grid", "list", "index"] as WorkMode[]).map((m) => (
-              <button key={m} type="button" onClick={() => onWorkMode(m)} className={tagCls(mode === m)}>
-                {m}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
+    <Section id="work" className="pt-[var(--header-h)] pb-16 sm:pb-24">
       <div className="px-4 sm:px-6 md:px-8 pt-6 sm:pt-8">
         <div key={`${mode}-${activeCategory}`} className="animate-fade-up">
           {mode === "grid" && <WorkGrid filtered={filtered} onOpen={onOpen} />}
@@ -1244,7 +1310,14 @@ export default function App() {
 
   return (
     <div className="min-h-[100dvh] bg-paper text-ink">
-      <Nav activeSection={activeSection} onNav={handleNav} />
+      <Nav
+        activeSection={activeSection}
+        onNav={handleNav}
+        workMode={workMode}
+        activeCategory={activeCategory}
+        onWorkMode={setWorkMode}
+        onCategory={setActiveCategory}
+      />
 
       <main>
         <WorkSection
@@ -1252,8 +1325,6 @@ export default function App() {
           activeCategory={activeCategory}
           onOpen={openGallery}
           onLightbox={openLightbox}
-          onWorkMode={setWorkMode}
-          onCategory={setActiveCategory}
         />
         <AboutView />
         <GidaView />

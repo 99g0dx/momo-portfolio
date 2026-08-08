@@ -316,22 +316,22 @@
 }
 
 /* Page shell padding under fixed header */
-.page-pad-work {
-  padding-top: calc(9rem + env(safe-area-inset-top, 0px));
-}
-
-.page-pad-simple {
-  padding-top: calc(3.75rem + env(safe-area-inset-top, 0px));
+:root {
+  --header-h: calc(3.25rem + env(safe-area-inset-top, 0px) + 1px);
 }
 
 @media (min-width: 640px) {
-  .page-pad-work {
-    padding-top: calc(9.25rem + env(safe-area-inset-top, 0px));
+  :root {
+    --header-h: calc(3.625rem + env(safe-area-inset-top, 0px) + 1px);
   }
+}
 
-  .page-pad-simple {
-    padding-top: calc(4rem + env(safe-area-inset-top, 0px));
-  }
+.page-pad-work {
+  padding-top: calc(var(--header-h) + 2.5rem);
+}
+
+.page-pad-simple {
+  padding-top: var(--header-h);
 }
 
 @media (prefers-reduced-motion: reduce) {
