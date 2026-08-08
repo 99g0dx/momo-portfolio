@@ -104,7 +104,7 @@ export const projects: Project[] = [
     client: "Daniel Obaweya",
     description:
       "The first in a series exploring performance and connection. A collaboration between Momo Hassan-Odukale & Daniel Obaweya, featuring SS25 collections.",
-    coverImage: "/images/the-audition/02.jpg",
+    coverImage: "/images/the-audition/01.jpg",
     images: [
       "/images/the-audition/01.jpg",
       "/images/the-audition/02.jpg",
@@ -119,7 +119,7 @@ export const projects: Project[] = [
     client: "Lisa Folawiyo Studio",
     description:
       "Lisa Folawiyo Studio Coll 1 2025: a vibrant ode to life as a race, blending bold prints, handcrafted embellishments, and cultural motifs like the Nigerian game Ayo. This collection celebrates the drive, ambition, and joy of the journey, reminding us that while the goal matters, the race is meant to be enjoyed. Styled by GIDA founder and Editor-in-Chief Momo Hassan-Odukale, shot by Jurnee Peterchukwu for GIDA Journal, with event concept and coordination by EE Collective.",
-    coverImage: "/images/the-starting-line/01.jpg",
+    coverImage: "/images/the-starting-line/05.jpg",
     images: [
       "/images/the-starting-line/01.jpg",
       "/images/the-starting-line/02.jpg",
