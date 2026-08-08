@@ -25,8 +25,7 @@ const BIO = [
 ]
 const SERVICES = ["Photography", "Creative Direction", "Art Direction", "Editorial", "Campaign"]
 const CLIENTS = "[Brand] · [Brand] · [Brand] · [Brand] · [Brand] · [Brand]"
-const ABOUT_IMAGE =
-  "https://images.unsplash.com/photo-1506863530036-1efeddceb993?w=900&h=1200&fit=crop&auto=format&q=80"
+const ABOUT_IMAGE = "/images/momo-about.png"
 // ───────────────────────────────────────────────────────────────────────────
 
 type SectionId = "work" | "about" | "gida" | "consultancy" | "contact"
@@ -582,7 +581,7 @@ function AboutView() {
           <FadeImg
             src={ABOUT_IMAGE}
             alt={NAME}
-            className="w-full h-full object-cover object-top"
+            className="w-full h-full object-cover object-center"
             loading="lazy"
           />
         </div>
@@ -609,7 +608,9 @@ function AboutView() {
               <p className="font-sans text-[10px] tracking-[0.16em] uppercase text-paper/40 mb-2 font-medium">
                 Selected Clients
               </p>
-              <p className="font-sans text-[13px] sm:text-[14px] text-paper/65 leading-relaxed font-light">{CLIENTS}</p>
+              <p className="font-sans text-[13px] sm:text-[14px] text-paper/65 leading-relaxed font-light">
+                {CLIENTS}
+              </p>
             </div>
           </div>
         </div>

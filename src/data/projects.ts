@@ -35,21 +35,22 @@ export interface Project {
 export const projects: Project[] = [
   {
     id: "editorial-noir-2024",
-    title: "Noir Studies",
+    title: "Five Years of Kad",
     category: "Editorial",
     year: "2024",
     client: "Self-initiated",
     description:
       "A study in shadow and silhouette across five sittings. Available exclusively.",
-    coverImage:
-      "https://images.unsplash.com/photo-1731589802956-b4693dae884b",
+    coverImage: "/images/five-years-of-kad/01.jpg",
     images: [
-      "https://images.unsplash.com/photo-1779911915399-aeaaa1153847",
-      "https://images.unsplash.com/photo-1779912218007-1a7854ba4f23",
-      "https://images.unsplash.com/photo-1779912217733-0b7df75b5083",
-      "https://images.unsplash.com/photo-1766951087359-fe48ea4f2796",
-      "https://images.unsplash.com/photo-1779911915514-b36bcec0bddc",
-      "https://images.unsplash.com/photo-1779912217682-cc99d650bff1",
+      "/images/five-years-of-kad/01.jpg",
+      "/images/five-years-of-kad/02.jpg",
+      "/images/five-years-of-kad/03.jpg",
+      "/images/five-years-of-kad/04.jpg",
+      "/images/five-years-of-kad/05.jpg",
+      "/images/five-years-of-kad/06.jpg",
+      "/images/five-years-of-kad/07.jpg",
+      "/images/five-years-of-kad/08.jpg",
     ],
   },
   {
