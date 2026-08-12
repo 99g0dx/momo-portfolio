@@ -10,42 +10,34 @@ import {
 import { projects, type Project } from "./data/projects"
 import {
   gidaAbout,
-  gidaFeatures,
-  gidaGuide,
   gidaInstagram,
-  gidaProgramming,
   gidaSubscribeUrl,
   gidaVolumes,
 } from "./data/gida"
 
 // ── Personalise everything here ────────────────────────────────────────────
 const NAME = "MOMO"
-const EMAIL = "hello@momolagos.com"
+const EMAIL = "Morinsolaho@gmail.com"
 const LOCATION = "Lagos · London"
 const SOCIAL = [
-  { label: "Instagram", handle: "momo.mho", href: "https://instagram.com/momo.mho" },
-  { label: "Studio", handle: "momo.lagos", href: "https://instagram.com/momo.lagos" },
-  { label: "GIDA", handle: "gidajournal", href: "https://instagram.com/gidajournal" },
+  { label: "Socials", handle: "Momo.mho", href: "https://instagram.com/momo.mho" },
 ] as const
 const BIO = [
-  "Your Name is a photographer and creative director based in [City]. With over a decade of experience, their work sits at the intersection of fashion, culture, and image.",
-  "They have collaborated with leading publications and brands including [Magazine], [Magazine], [Brand], and [Brand], bringing a precise, concept-led approach to every commission.",
-  "Each project is built from a strong idea — from the first brief to the final image.",
+  "Momo Hassan-Odukale is a stylist, creative director, and consultant based between London and Lagos, working at the intersection of fashion, history, and storytelling. She is the founder of GIDA Journal, a print publication documenting creative culture across Africa. Her work spans campaigns for Nike, Bottega Veneta, IAMISIGO, Lisa Folawiyo Studio, and Guinness, costume design for artists including Asake, ASA, Mr Eazi, and Temi Otedola, and editorial features in Vogue and Dazed.",
 ]
-const SERVICES = ["Photography", "Creative Direction", "Art Direction", "Editorial", "Campaign"]
-const CLIENTS = "[Brand] · [Brand] · [Brand] · [Brand] · [Brand] · [Brand]"
+const SERVICES = ["Creative Direction", "Styling"]
 const ABOUT_IMAGE = "/images/momo-about.png"
 // ───────────────────────────────────────────────────────────────────────────
 
-type SectionId = "work" | "about" | "gida" | "consultancy" | "contact"
+type SectionId = "home" | "work" | "about" | "gida" | "consultancy" | "contact"
 type WorkMode = "grid" | "list" | "index"
 
 const SECTIONS: { id: SectionId; label: string }[] = [
-  { id: "work", label: "Work" },
   { id: "about", label: "About" },
-  { id: "gida", label: "GIDA" },
+  { id: "work", label: "Selected Work" },
   { id: "consultancy", label: "Consultancy" },
   { id: "contact", label: "Contact" },
+  { id: "gida", label: "GIDA" },
 ]
 
 function headerOffset() {
@@ -64,7 +56,8 @@ function scrollToSection(id: SectionId) {
   if (!el) return
   navLock = id
   window.clearTimeout(navLockTimer)
-  const top = el.getBoundingClientRect().top + window.scrollY - headerOffset()
+  const top =
+    id === "home" ? 0 : el.getBoundingClientRect().top + window.scrollY - headerOffset()
   window.scrollTo({ top, behavior: "smooth" })
   const clear = () => {
     navLock = null
@@ -86,10 +79,7 @@ const imgUrl = (src: string, w: number, h?: number) => {
   return `${base}?${params.toString()}`
 }
 
-const allCategories = [
-  "All",
-  ...Array.from(new Set(projects.map((p) => p.category))),
-]
+const allCategories = ["All", "Creative Direction", "Styling"]
 
 function FadeImg({
   src,
@@ -266,7 +256,7 @@ function Nav({
   onCategory: (c: string) => void
 }) {
   const [menuOpen, setMenuOpen] = useState(false)
-  const [workChrome, setWorkChrome] = useState(true)
+  const [workChrome, setWorkChrome] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const headerRef = useRef<HTMLElement>(null)
   const closeMenu = useCallback(() => setMenuOpen(false), [])
@@ -290,12 +280,13 @@ function Nav({
 
   useEffect(() => {
     const update = () => {
-      const about = document.getElementById("about")
-      if (!about) {
+      const work = document.getElementById("work")
+      if (!work) {
         setWorkChrome(activeSection === "work")
         return
       }
-      setWorkChrome(about.getBoundingClientRect().top > 88)
+      const rect = work.getBoundingClientRect()
+      setWorkChrome(rect.top <= 88 && rect.bottom > 88)
     }
     update()
     window.addEventListener("scroll", update, { passive: true })
@@ -345,7 +336,7 @@ function Nav({
       >
         <button
           type="button"
-          onClick={() => go("work")}
+          onClick={() => go("home")}
           className="font-display text-[19px] sm:text-[22px] tracking-[-0.02em] font-light text-ink whitespace-nowrap shrink-0 transition-opacity hover:opacity-55 absolute left-1/2 -translate-x-1/2 z-10"
         >
           {NAME}
@@ -662,6 +653,25 @@ function GalleryOverlay({
   )
 }
 
+// ─── Landing / Intro ──────────────────────────────────────────────────────────
+function LandingView() {
+  return (
+    <Section
+      id="home"
+      className="min-h-[100dvh] flex items-center justify-center bg-paper px-5 sm:px-8"
+    >
+      <div className="max-w-3xl mx-auto text-center animate-fade-up">
+        <h1 className="font-display text-[clamp(2.35rem,7.5vw,4.75rem)] tracking-[-0.03em] font-light text-ink leading-[1.05] uppercase">
+          Momo Hassan-Odukale
+        </h1>
+        <p className="mt-6 sm:mt-8 font-sans text-[14px] sm:text-[16px] leading-[1.7] text-ink/65 font-light max-w-md mx-auto">
+          Momo Hassan-Odukale is a stylist, creative director, and consultant.
+        </p>
+      </div>
+    </Section>
+  )
+}
+
 // ─── About View ───────────────────────────────────────────────────────────────
 function AboutView() {
   return (
@@ -692,14 +702,6 @@ function AboutView() {
               </p>
               <p className="font-sans text-[13px] sm:text-[14px] text-paper/65 leading-relaxed font-light">
                 {SERVICES.join(" · ")}
-              </p>
-            </div>
-            <div className="mt-5 pt-5 border-t border-paper/10">
-              <p className="font-sans text-[10px] tracking-[0.16em] uppercase text-paper/40 mb-2 font-medium">
-                Selected Clients
-              </p>
-              <p className="font-sans text-[13px] sm:text-[14px] text-paper/65 leading-relaxed font-light">
-                {CLIENTS}
               </p>
             </div>
           </div>
@@ -752,9 +754,11 @@ function GidaView() {
               </p>
             ))}
           </div>
-          <p className="font-sans text-[13px] sm:text-[14px] leading-relaxed text-ink/50 font-light">
-            {gidaAbout.founder}
-          </p>
+          {gidaAbout.founder ? (
+            <p className="font-sans text-[13px] sm:text-[14px] leading-relaxed text-ink/50 font-light">
+              {gidaAbout.founder}
+            </p>
+          ) : null}
         </div>
       </div>
 
@@ -817,96 +821,14 @@ function GidaView() {
               </li>
             ))}
           </ol>
-
-          <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-ink-muted mt-12 mb-8 font-medium">
-            Programming
-          </p>
-          <ol className="border-t border-ink/15">
-            {gidaProgramming.map((item) => (
-              <li
-                key={item.id}
-                className="grid grid-cols-[5.5rem_1fr_auto] sm:grid-cols-[6.5rem_1fr_auto] gap-x-4 py-4 border-b border-ink/10 items-baseline"
-              >
-                <span className="font-sans text-[11px] text-ink-muted tracking-[0.06em] font-medium">
-                  {item.kind}
-                </span>
-                {item.href ? (
-                  <a
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-display text-[18px] sm:text-[20px] tracking-[-0.02em] text-ink leading-snug underline underline-offset-4 decoration-ink/20 hover:decoration-ink"
-                  >
-                    {item.title}
-                  </a>
-                ) : (
-                  <p className="font-display text-[18px] sm:text-[20px] tracking-[-0.02em] text-ink leading-snug">
-                    {item.title}
-                  </p>
-                )}
-                <span className="font-sans text-[11px] text-ink/45 tabular-nums">{item.year}</span>
-              </li>
-            ))}
-          </ol>
         </div>
       </div>
 
-      {gidaFeatures.map((feature, featureIndex) => (
-        <div key={feature.id} className={featureIndex === 0 ? "mt-16 sm:mt-20" : "mt-16 sm:mt-24"}>
-          <div className="px-5 sm:px-8 md:px-12">
-            <div className="max-w-2xl mx-auto mb-8 sm:mb-10 animate-fade-up">
-              <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-ink-muted mb-5 font-medium">
-                {feature.label}
-              </p>
-              <h2 className="font-display text-[clamp(1.85rem,4.5vw,2.75rem)] tracking-[-0.03em] text-ink leading-[1.08] mb-5">
-                {feature.title}
-              </h2>
-              <p className="font-sans text-[15px] sm:text-[16px] leading-[1.8] text-ink/78 font-light mb-5">
-                {feature.body}
-              </p>
-              <a
-                href={feature.readMoreHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-sans text-[13px] text-ink underline underline-offset-4 decoration-ink/30 hover:decoration-ink"
-              >
-                Read more…
-              </a>
-            </div>
-          </div>
-          <div className="gida-strip" role="list" aria-label={feature.title}>
-            {feature.images.map((src, i) => (
-              <div key={src} role="listitem" className="gida-strip__frame">
-                <FadeImg
-                  src={src}
-                  alt={`${feature.title} ${i + 1}`}
-                  loading={featureIndex === 0 && i === 0 ? "eager" : "lazy"}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      ))}
-
       <div className="px-5 sm:px-8 md:px-12 mt-16 sm:mt-24">
         <div className="max-w-2xl mx-auto animate-fade-up">
-          <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-ink-muted mb-5 font-medium">
-            Newsletter
+          <p className="font-sans text-[15px] sm:text-[16px] leading-[1.8] text-ink/78 font-light mb-10">
+            Subscribe to stay connected with the pulse of African art, design, and culture.
           </p>
-          <h2 className="font-display text-[clamp(1.85rem,4.5vw,2.75rem)] tracking-[-0.03em] text-ink leading-[1.08] mb-6">
-            {gidaGuide.title}
-          </h2>
-          <div className="space-y-5 mb-10">
-            {gidaGuide.paragraphs.map((paragraph) => (
-              <p
-                key={paragraph.slice(0, 48)}
-                className="font-sans text-[15px] sm:text-[16px] leading-[1.8] text-ink/78 font-light"
-              >
-                {paragraph}
-              </p>
-            ))}
-          </div>
 
           <form onSubmit={onSubscribe} className="max-w-md space-y-5 mb-8">
             <label className="block">
@@ -957,24 +879,39 @@ function GidaView() {
 // ─── Consultancy View ─────────────────────────────────────────────────────────
 function ConsultancyView({ onContact }: { onContact: () => void }) {
   const services = [
-    { name: "Research", description: "Cultural and contextual research to ground briefs and storytelling." },
-    { name: "Art Direction", description: "Visual direction for campaigns, editorials, and brand worlds." },
-    { name: "Production", description: "End-to-end production support across locations, teams, and timelines." },
-    { name: "Marketing", description: "Campaign thinking that connects image work to audience and brand voice." },
-    { name: "Publishing", description: "Editorial strategy and print projects shaped through the GIDA practice." },
+    {
+      name: "Styling",
+      description: "Directing looks for campaigns, editorials, and artist visuals.",
+    },
+    {
+      name: "Creative direction",
+      description: "Shaping the overall visual concept and story across a project.",
+    },
+    {
+      name: "Brand image development",
+      description: "Building a brand's visual identity and creative positioning.",
+    },
+    {
+      name: "Creative research",
+      description: "Sourcing references, archives, and cultural context to ground a project.",
+    },
+    {
+      name: "Costume design",
+      description: "Designing character and performance looks for film, music, and campaigns.",
+    },
   ]
 
   return (
     <Section id="consultancy" className="bg-[#f1efe8] px-5 sm:px-8 md:px-12 py-16 sm:py-24">
       <div className="max-w-2xl mx-auto">
         <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-ink-muted mb-6 font-medium">
-          GIDA Solutions
+          Consultancy
         </p>
         <h1 className="font-display text-[clamp(2.25rem,5vw,3.4rem)] tracking-[-0.03em] text-ink leading-[1.08] mb-5">
           Consultancy
         </h1>
         <p className="font-sans text-[15px] sm:text-[16px] leading-[1.75] text-ink/72 mb-12 max-w-lg font-light">
-          Clear, considered creative support for brands, institutions, and cultural partners.
+          Momo offers the following services for brands, artists, and cultural institutions:
         </p>
         <ol className="border-t border-ink/15">
           {services.map((service, i) => (
@@ -1009,7 +946,7 @@ function ConsultancyView({ onContact }: { onContact: () => void }) {
 }
 
 // ─── Contact View ─────────────────────────────────────────────────────────────
-function ContactView({ onNav }: { onNav: (id: SectionId) => void }) {
+function ContactView() {
   const [sent, setSent] = useState(false)
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -1093,7 +1030,7 @@ function ContactView({ onNav }: { onNav: (id: SectionId) => void }) {
             </div>
             <div>
               <p className="font-sans text-[10px] tracking-[0.16em] uppercase text-ink-muted mb-3 font-medium">
-                Social
+                Socials
               </p>
               <ul className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-2">
                 {SOCIAL.map((item) => (
@@ -1104,7 +1041,7 @@ function ContactView({ onNav }: { onNav: (id: SectionId) => void }) {
                       rel="noopener noreferrer"
                       className="font-sans text-[13px] text-ink hover:opacity-45 transition-opacity"
                     >
-                      {item.label} · @{item.handle}
+                      @{item.handle}
                     </a>
                   </li>
                 ))}
@@ -1113,26 +1050,30 @@ function ContactView({ onNav }: { onNav: (id: SectionId) => void }) {
           </div>
         </div>
       </div>
-
-      <div className="border-t border-ink/10 px-5 sm:px-8 py-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
-        <p className="font-sans text-[9px] text-ink-muted tracking-wider">
-          © {new Date().getFullYear()} {NAME} · ALL RIGHTS RESERVED
-        </p>
-        <div className="flex flex-wrap gap-4 sm:gap-5">
-          {SECTIONS.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => onNav(item.id)}
-              className="font-sans text-[9px] text-ink-muted tracking-wider hover:text-ink transition-colors"
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-        <p className="font-sans text-[9px] text-ink-faint tracking-wider">{LOCATION}</p>
-      </div>
     </Section>
+  )
+}
+
+function SiteFooter({ onNav }: { onNav: (id: SectionId) => void }) {
+  return (
+    <div className="border-t border-ink/10 px-5 sm:px-8 py-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 bg-paper pb-[max(1.25rem,env(safe-area-inset-bottom))]">
+      <p className="font-sans text-[9px] text-ink-muted tracking-wider">
+        © {new Date().getFullYear()} {NAME} · ALL RIGHTS RESERVED
+      </p>
+      <div className="flex flex-wrap gap-4 sm:gap-5">
+        {SECTIONS.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            onClick={() => onNav(item.id)}
+            className="font-sans text-[9px] text-ink-muted tracking-wider hover:text-ink transition-colors"
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+      <p className="font-sans text-[9px] text-ink-faint tracking-wider">{LOCATION}</p>
+    </div>
   )
 }
 
@@ -1233,7 +1174,7 @@ function Lightbox({
 
 // ─── App ──────────────────────────────────────────────────────────────────────
 export default function App() {
-  const [activeSection, setActiveSection] = useState<SectionId>("work")
+  const [activeSection, setActiveSection] = useState<SectionId>("home")
   const [workMode, setWorkMode] = useState<WorkMode>("grid")
   const [activeCategory, setActiveCategory] = useState("All")
   const [activeProject, setActiveProject] = useState<Project | null>(null)
@@ -1321,9 +1262,22 @@ export default function App() {
       if (header instanceof HTMLElement) header.style.pointerEvents = ""
 
       const section = hit instanceof Element ? hit.closest("section[id]") : null
+      if (section?.id === "home") {
+        apply("home")
+        return
+      }
       if (section?.id && ids.includes(section.id as SectionId)) {
         apply(section.id as SectionId)
         return
+      }
+
+      const home = document.getElementById("home")
+      if (home) {
+        const rect = home.getBoundingClientRect()
+        if (rect.top <= y && rect.bottom > y) {
+          apply("home")
+          return
+        }
       }
 
       let current: SectionId = ids[0]
@@ -1361,17 +1315,20 @@ export default function App() {
       />
 
       <main>
+        <LandingView />
+        <AboutView />
         <WorkSection
           mode={workMode}
           activeCategory={activeCategory}
           onOpen={openGallery}
           onLightbox={openLightbox}
         />
-        <AboutView />
-        <GidaView />
         <ConsultancyView onContact={() => handleNav("contact")} />
-        <ContactView onNav={handleNav} />
+        <ContactView />
+        <GidaView />
       </main>
+
+      <SiteFooter onNav={handleNav} />
 
       {activeProject && (
         <GalleryOverlay

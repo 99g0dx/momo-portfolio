@@ -16,12 +16,10 @@ export const gidaSubscribeUrl = "https://instagram.com/gidajournal"
 export const gidaAbout = {
   pronunciation: "/ˈɡiːdə/",
   meaning: "“home-grown” in English from Hausa",
-  founder: "Founded by Momo Hassan-Odukale.",
+  founder: "",
   paragraphs: [
-    "Born out of necessity, GIDA is a print and digital platform, a marketplace, and a community where African creatives, writers and thinkers can connect, develop their practice, and share their work.",
-    "GIDA is the tie that binds African local talent, heritage, stories and craftsmanship with the rest of the world. Incubating and harnessing the power of collaboration through creativity, GIDA births pivotal digital and physical monuments for the next generation of African creatives to be.",
-    "GIDA Journal is an annual print publication, prioritising works by creatives, writers and thinkers based and living in Africa. In each volume we focus on a different region, working closely with creatives from various fields, whose practices we believe in and are committed to platforming. We are dedicated to promoting and protecting the diversity of cultural practices and expressions in Africa, particularly through focusing on heritage and craftsmanship.",
-    "Each publication acts as an archival monument, capturing a moment in time in African creativity across mediums and exploring broad themes from architecture and fashion, to sustainability and the visual arts. GIDA Journal is a timeless anthology where emerging and established African creatives, writers and thinkers can co-exist in a space that prioritises freedom of cultural expression and diversity of perspectives.",
+    "GIDA Journal is a print and digital platform documenting contemporary creative culture across Africa, founded by Momo Hassan-Odukale in 2022. Each volume centers a different region, with a focus on archiving the people, movements, and histories shaping African creative industries today. Beyond print, GIDA consults on projects with brands such as ART X Lagos, where it produced and curated their 10th anniversary magazine, alongside live programming such as roundtable conversations and pop-up activations in cities including Lagos, London, Cape Town, Nairobi, Marrakesh, and more.",
+    "GIDA has partnered with brands including Homecoming, MTN, Accor, Chanel, and Leadway Assurance, across sponsorship, editorial collaboration, and brand consultancy.",
   ],
 }
 

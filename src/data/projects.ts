@@ -36,7 +36,7 @@ export const projects: Project[] = [
   {
     id: "editorial-noir-2024",
     title: "Five Years of Kad",
-    category: "Editorial",
+    category: "Creative Direction",
     year: "2024",
     client: "Self-initiated",
     description:
@@ -78,7 +78,7 @@ export const projects: Project[] = [
   {
     id: "campaign-structured-2023",
     title: "Davido's 5ive Album artwork",
-    category: "Campaign",
+    category: "Creative Direction",
     year: "2023",
     client: "Davido",
     description:
