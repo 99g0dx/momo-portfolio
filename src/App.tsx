@@ -7,6 +7,7 @@ import {
   type ReactNode,
   type TouchEvent,
 } from "react"
+import { Link, NavLink, Route, Routes, useLocation, useNavigate } from "react-router-dom"
 import { projects, type Project } from "./data/projects"
 import {
   gidaAbout,
@@ -27,44 +28,26 @@ const BIO = [
 ]
 const SERVICES = ["Creative Direction", "Styling"]
 const ABOUT_IMAGE = "/images/momo-about.png"
+const LOGO = "/images/momo-logo-line.png"
 // ───────────────────────────────────────────────────────────────────────────
 
-type SectionId = "home" | "work" | "about" | "gida" | "consultancy" | "contact"
+type PageId = "home" | "work" | "about" | "gida" | "consultancy" | "contact"
 type WorkMode = "grid" | "list" | "index"
 
-const SECTIONS: { id: SectionId; label: string }[] = [
-  { id: "about", label: "About" },
-  { id: "work", label: "Selected Work" },
-  { id: "consultancy", label: "Consultancy" },
-  { id: "contact", label: "Contact" },
-  { id: "gida", label: "GIDA" },
+const PAGES: { id: PageId; label: string; path: string }[] = [
+  { id: "home", label: "Home", path: "/" },
+  { id: "about", label: "About", path: "/about" },
+  { id: "work", label: "Selected Work", path: "/work" },
+  { id: "consultancy", label: "Consultancy", path: "/consultancy" },
+  { id: "contact", label: "Contact", path: "/contact" },
+  { id: "gida", label: "GIDA", path: "/gida" },
 ]
 
-function headerOffset() {
-  const header = document.querySelector("header")
-  if (header instanceof HTMLElement && header.offsetHeight > 0) return header.offsetHeight
-  const raw = getComputedStyle(document.documentElement).getPropertyValue("--header-h")
-  const value = parseFloat(raw)
-  return Number.isFinite(value) ? value : 56
-}
-
-let navLock: SectionId | null = null
-let navLockTimer = 0
-
-function scrollToSection(id: SectionId) {
-  const el = document.getElementById(id)
-  if (!el) return
-  navLock = id
-  window.clearTimeout(navLockTimer)
-  const top =
-    id === "home" ? 0 : el.getBoundingClientRect().top + window.scrollY - headerOffset()
-  window.scrollTo({ top, behavior: "smooth" })
-  const clear = () => {
-    navLock = null
-    window.removeEventListener("scrollend", clear)
-  }
-  window.addEventListener("scrollend", clear, { once: true })
-  navLockTimer = window.setTimeout(clear, 900)
+function pathToPage(pathname: string): PageId {
+  const match = PAGES.find((page) =>
+    page.path === "/" ? pathname === "/" : pathname === page.path || pathname.startsWith(`${page.path}/`),
+  )
+  return match?.id ?? "home"
 }
 
 const imgUrl = (src: string, w: number, h?: number) => {
@@ -80,6 +63,10 @@ const imgUrl = (src: string, w: number, h?: number) => {
 }
 
 const allCategories = ["All", "Creative Direction", "Styling"]
+
+function projectCredit(p: Project) {
+  return [p.description, p.category].filter(Boolean).join(" · ")
+}
 
 function FadeImg({
   src,
@@ -117,12 +104,12 @@ function Section({
   children,
   className = "",
 }: {
-  id: SectionId
+  id: PageId
   children: ReactNode
   className?: string
 }) {
   return (
-    <section id={id} className={`scroll-mt-[var(--header-h)] ${className}`}>
+    <section id={id} className={className}>
       {children}
     </section>
   )
@@ -240,31 +227,15 @@ function WorkToolbar({
   )
 }
 
-function Nav({
-  activeSection,
-  onNav,
-  workMode,
-  activeCategory,
-  onWorkMode,
-  onCategory,
-}: {
-  activeSection: SectionId
-  onNav: (id: SectionId) => void
-  workMode: WorkMode
-  activeCategory: string
-  onWorkMode: (m: WorkMode) => void
-  onCategory: (c: string) => void
-}) {
+const NAV_LINKS = PAGES.filter((page) => page.id !== "home")
+
+function Nav() {
+  const location = useLocation()
+  const activePage = pathToPage(location.pathname)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [workChrome, setWorkChrome] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const headerRef = useRef<HTMLElement>(null)
   const closeMenu = useCallback(() => setMenuOpen(false), [])
-
-  const go = (id: SectionId) => {
-    onNav(id)
-    closeMenu()
-  }
 
   useEffect(() => {
     const header = headerRef.current
@@ -276,132 +247,129 @@ function Nav({
     const observer = new ResizeObserver(sync)
     observer.observe(header)
     return () => observer.disconnect()
-  }, [workChrome])
+  }, [])
 
   useEffect(() => {
-    const update = () => {
-      const work = document.getElementById("work")
-      if (!work) {
-        setWorkChrome(activeSection === "work")
-        return
-      }
-      const rect = work.getBoundingClientRect()
-      setWorkChrome(rect.top <= 88 && rect.bottom > 88)
-    }
-    update()
-    window.addEventListener("scroll", update, { passive: true })
-    window.addEventListener("resize", update)
-    return () => {
-      window.removeEventListener("scroll", update)
-      window.removeEventListener("resize", update)
-    }
-  }, [activeSection])
+    closeMenu()
+  }, [location.pathname, closeMenu])
 
   useEffect(() => {
     if (!menuOpen) return
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") closeMenu()
     }
-    const onPointer = (e: Event) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) closeMenu()
+    const onResize = () => {
+      if (window.matchMedia("(min-width: 768px)").matches) closeMenu()
     }
     window.addEventListener("keydown", onKey)
-    document.addEventListener("mousedown", onPointer)
-    document.addEventListener("touchstart", onPointer)
+    window.addEventListener("resize", onResize)
     return () => {
       window.removeEventListener("keydown", onKey)
-      document.removeEventListener("mousedown", onPointer)
-      document.removeEventListener("touchstart", onPointer)
+      window.removeEventListener("resize", onResize)
     }
   }, [menuOpen, closeMenu])
 
-  const pillCls = (active: boolean) =>
-    `font-sans text-[11px] sm:text-[10.5px] tracking-[0.14em] uppercase px-1.5 py-1 transition-opacity duration-200 shrink-0 inline-flex items-center font-medium ${
-      active ? "text-ink" : "text-ink/38 hover:text-ink"
-    }`
+  const isAbout = location.pathname === "/about"
 
   const menuItemCls = (active: boolean) =>
-    `w-full text-left font-sans text-[11px] tracking-[0.14em] uppercase px-3 py-2.5 border-b border-ink/10 transition-opacity font-medium ${
-      active ? "text-ink" : "text-ink/40 hover:text-ink"
+    `block w-full text-left font-sans text-[11px] tracking-[0.16em] uppercase px-3 py-2 border-b transition-opacity font-medium ${
+      isAbout
+        ? `border-paper/10 ${active ? "text-paper" : "text-paper/78 hover:text-paper"}`
+        : `border-ink/10 ${active ? "text-ink" : "text-ink/40 hover:text-ink"}`
+    }`
+
+  const desktopLinkCls = (active: boolean) =>
+    `font-sans text-[8px] tracking-[0.1em] uppercase whitespace-nowrap transition-opacity font-medium ${
+      isAbout
+        ? active
+          ? "text-paper"
+          : "text-paper/78 hover:text-paper"
+        : active
+          ? "text-ink"
+          : "text-ink/40 hover:text-ink"
     }`
 
   return (
-    <header
-      ref={headerRef}
-      className="fixed top-0 left-0 right-0 z-40 bg-paper pt-[env(safe-area-inset-top,0px)]"
-    >
-      <div
-        className="relative flex items-center justify-end gap-3 px-4 sm:px-6 md:px-8 py-3 sm:py-3.5"
-        ref={menuRef}
+    <>
+      <header
+        ref={headerRef}
+        className={`fixed top-0 left-0 right-0 z-50 pt-[env(safe-area-inset-top,0px)] ${
+          isAbout ? "bg-ink" : "bg-paper"
+        }`}
       >
-        <button
-          type="button"
-          onClick={() => go("home")}
-          className="font-display text-[19px] sm:text-[22px] tracking-[-0.02em] font-light text-ink whitespace-nowrap shrink-0 transition-opacity hover:opacity-55 absolute left-1/2 -translate-x-1/2 z-10"
-        >
-          {NAME}
-        </button>
-
-        <div className="hidden md:flex gap-4 shrink-0 flex-wrap justify-end max-w-[58%]">
-          {SECTIONS.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => go(item.id)}
-              aria-current={activeSection === item.id ? "page" : undefined}
-              className={pillCls(activeSection === item.id)}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-
-        <button
-          type="button"
-          className="menu-toggle grid md:hidden"
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
-          aria-expanded={menuOpen}
-          aria-controls="mobile-nav-menu"
-          onClick={() => setMenuOpen((open) => !open)}
-        >
-          <span className={`menu-toggle__line ${menuOpen ? "is-open" : ""}`} />
-          <span className={`menu-toggle__line ${menuOpen ? "is-open" : ""}`} />
-          <span className={`menu-toggle__line ${menuOpen ? "is-open" : ""}`} />
-        </button>
-
-        {menuOpen && (
-          <nav
-            id="mobile-nav-menu"
-            className="absolute right-4 top-[calc(100%-0.15rem)] z-50 w-[min(10.5rem,calc(100vw-2rem))] border border-ink/15 bg-paper shadow-[0_8px_24px_rgba(12,12,10,0.1)] animate-fade-up md:hidden"
-            aria-label="Primary"
+        <div className="relative flex items-center justify-end px-4 sm:px-6 md:px-8 py-2.5 sm:py-3">
+          <Link
+            to="/"
+            onClick={closeMenu}
+            aria-label={NAME}
+            className="absolute left-1/2 -translate-x-1/2 z-10 shrink-0 transition-opacity hover:opacity-55"
           >
-            {SECTIONS.map((item, i) => (
-              <button
+            <img
+              src={LOGO}
+              alt={NAME}
+              className={`h-14 sm:h-16 md:h-[4.5rem] w-auto object-contain ${isAbout ? "invert" : ""}`}
+            />
+          </Link>
+
+          <nav className="hidden md:flex items-center gap-x-2 lg:gap-x-2.5" aria-label="Primary">
+            {NAV_LINKS.map((item) => (
+              <NavLink
                 key={item.id}
-                type="button"
-                onClick={() => go(item.id)}
-                aria-current={activeSection === item.id ? "page" : undefined}
-                className={`${menuItemCls(activeSection === item.id)} ${i === SECTIONS.length - 1 ? "border-b-0" : ""}`}
+                to={item.path}
+                className={desktopLinkCls(activePage === item.id)}
+                aria-current={activePage === item.id ? "page" : undefined}
               >
                 {item.label}
-              </button>
+              </NavLink>
             ))}
           </nav>
-        )}
-      </div>
-      <div className="h-px bg-ink/10" />
-      {workChrome ? (
-        <>
-          <WorkToolbar
-            mode={workMode}
-            activeCategory={activeCategory}
-            onWorkMode={onWorkMode}
-            onCategory={onCategory}
+
+          <button
+            type="button"
+            className={`menu-toggle grid md:hidden ${isAbout ? "is-on-ink" : ""}`}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+            aria-controls="site-nav-menu"
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            <span className={`menu-toggle__line ${menuOpen ? "is-open" : ""}`} />
+            <span className={`menu-toggle__line ${menuOpen ? "is-open" : ""}`} />
+            <span className={`menu-toggle__line ${menuOpen ? "is-open" : ""}`} />
+          </button>
+        </div>
+        <div className={`h-px ${isAbout ? "bg-paper/15" : "bg-ink/10"}`} />
+      </header>
+
+      {menuOpen ? (
+        <div ref={menuRef} className="fixed inset-0 z-40 md:hidden">
+          <button
+            type="button"
+            aria-label="Close menu"
+            className="absolute inset-0 bg-transparent"
+            onClick={closeMenu}
           />
-          <div className="h-px bg-ink/10" />
-        </>
+          <nav
+            id="site-nav-menu"
+            className={`absolute top-[var(--header-h)] right-4 w-[min(12.5rem,calc(100vw-2rem))] border animate-fade-up ${
+              isAbout ? "bg-ink border-paper/15" : "bg-paper border-ink/15 shadow-[0_8px_24px_rgba(12,12,10,0.1)]"
+            }`}
+            aria-label="Primary"
+          >
+            {NAV_LINKS.map((item, i) => (
+              <NavLink
+                key={item.id}
+                to={item.path}
+                onClick={closeMenu}
+                aria-current={activePage === item.id ? "page" : undefined}
+                className={`${menuItemCls(activePage === item.id)} ${i === NAV_LINKS.length - 1 ? "border-b-0" : ""}`}
+              >
+                {item.label}
+              </NavLink>
+            ))}
+          </nav>
+        </div>
       ) : null}
-    </header>
+    </>
   )
 }
 
@@ -428,13 +396,13 @@ function WorkGrid({ filtered, onOpen }: { filtered: Project[]; onOpen: (p: Proje
             />
           </div>
           <div className="flex items-baseline justify-between gap-2">
-            <p className="font-display text-[17px] sm:text-[18px] tracking-[-0.015em] text-ink leading-snug">
+            <p className="font-display text-[17px] sm:text-[18px] tracking-[-0.015em] text-ink leading-snug min-w-0 break-words">
               {p.title}
             </p>
             <p className="font-sans text-[11px] text-ink-muted shrink-0 font-normal">{p.year}</p>
           </div>
           <p className="font-sans text-[10.5px] text-ink-muted mt-1.5 tracking-[0.12em] uppercase font-medium">
-            {p.category}
+            {projectCredit(p)}
           </p>
           <div className="mt-3 h-px bg-ink/10" />
         </button>
@@ -470,12 +438,12 @@ function WorkList({ filtered, onOpen }: { filtered: Project[]; onOpen: (p: Proje
               }}
             />
             <div className="relative z-10 flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-4 py-4 sm:py-5 border-b border-ink/10 min-h-14">
-              <p className="font-display text-[19px] sm:text-[21px] tracking-[-0.02em] text-ink flex-1 leading-[1.1]">
+              <p className="font-display text-[19px] sm:text-[21px] tracking-[-0.02em] text-ink flex-1 leading-[1.1] min-w-0 break-words">
                 {p.title}
               </p>
               <div className="flex items-center gap-3 sm:gap-4">
                 <p className="font-sans text-[10.5px] tracking-[0.12em] uppercase text-ink-muted shrink-0 font-medium">
-                  {p.category}
+                  {projectCredit(p)}
                 </p>
                 <p className="font-sans text-[11px] text-ink-muted shrink-0 sm:w-10 sm:text-right">
                   {p.year}
@@ -509,11 +477,11 @@ function WorkIndex({
       {filtered.map((p) => (
         <div key={p.id}>
           <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4 mb-3 sm:mb-4">
-            <h2 className="font-display text-[22px] sm:text-[26px] tracking-[-0.02em] text-ink leading-none">
+            <h2 className="font-display text-[22px] sm:text-[26px] tracking-[-0.02em] text-ink leading-none min-w-0 break-words">
               {p.title}
             </h2>
             <p className="font-sans text-[10.5px] tracking-[0.12em] uppercase text-ink-muted shrink-0 font-medium">
-              {p.category}
+              {projectCredit(p)}
               <span className="mx-1.5 opacity-50">·</span>
               {p.year}
             </p>
@@ -546,19 +514,34 @@ function WorkIndex({
 function WorkSection({
   mode,
   activeCategory,
+  onWorkMode,
+  onCategory,
   onOpen,
   onLightbox,
 }: {
   mode: WorkMode
   activeCategory: string
+  onWorkMode: (m: WorkMode) => void
+  onCategory: (c: string) => void
   onOpen: (p: Project) => void
   onLightbox: (src: string, all: string[]) => void
 }) {
   const filtered =
-    activeCategory === "All" ? projects : projects.filter((p) => p.category === activeCategory)
+    activeCategory === "All"
+      ? projects
+      : projects.filter((p) => p.category.includes(activeCategory))
 
   return (
-    <Section id="work" className="pt-[var(--header-h)] pb-16 sm:pb-24">
+    <Section id="work" className="pb-16 sm:pb-24 bg-paper pt-[var(--header-h)]">
+      <div className="work-toolbar-sticky sticky z-30 bg-paper">
+        <WorkToolbar
+          mode={mode}
+          activeCategory={activeCategory}
+          onWorkMode={onWorkMode}
+          onCategory={onCategory}
+        />
+        <div className="h-px bg-ink/10" />
+      </div>
       <div className="px-4 sm:px-6 md:px-8 pt-6 sm:pt-8">
         <div key={`${mode}-${activeCategory}`} className="animate-fade-up">
           {mode === "grid" && <WorkGrid filtered={filtered} onOpen={onOpen} />}
@@ -589,7 +572,7 @@ function GalleryOverlay({
   }, [])
 
   return (
-    <div className="fixed inset-0 z-50 bg-paper animate-fade-in overflow-y-auto pt-[env(safe-area-inset-top)]">
+    <div className="fixed inset-0 z-[70] bg-paper animate-fade-in overflow-y-auto pt-[env(safe-area-inset-top)]">
       <div className="sticky top-0 z-10 bg-paper/96 backdrop-blur-md border-b border-ink/10 px-4 sm:px-6 md:px-8 py-4 flex items-center justify-between">
         <button
           type="button"
@@ -610,14 +593,9 @@ function GalleryOverlay({
             <h1 className="font-display text-[32px] sm:text-[40px] tracking-[-0.025em] text-ink leading-[1.05]">
               {project.title}
             </h1>
-            {project.description && (
-              <p className="mt-4 font-sans text-[14px] sm:text-[15px] text-ink/70 leading-7 max-w-md font-light">
-                {project.description}
-              </p>
-            )}
           </div>
           <p className="font-sans text-[10.5px] text-ink-muted tracking-[0.12em] uppercase sm:text-right font-medium">
-            {project.category}
+            {projectCredit(project)}
             <span className="mx-1.5 opacity-40">·</span>
             {project.year}
             {project.client && (
@@ -658,13 +636,18 @@ function LandingView() {
   return (
     <Section
       id="home"
-      className="min-h-[100dvh] flex items-center justify-center bg-paper px-5 sm:px-8"
+      className="min-h-[100dvh] flex items-center justify-center bg-paper px-5 sm:px-8 lg:px-12 pt-[var(--header-h)]"
     >
-      <div className="max-w-3xl mx-auto text-center animate-fade-up">
-        <h1 className="font-display text-[clamp(2.35rem,7.5vw,4.75rem)] tracking-[-0.03em] font-light text-ink leading-[1.05] uppercase">
+      <div className="max-w-3xl mx-auto text-center animate-fade-up w-full">
+        <img
+          src={LOGO}
+          alt=""
+          className="mx-auto h-[clamp(3.25rem,16vw,7.5rem)] w-auto object-contain"
+        />
+        <h1 className="-mt-2 sm:-mt-3 font-display text-[clamp(1.35rem,5.5vw,2.85rem)] tracking-[-0.03em] font-light text-ink leading-[1.1] uppercase break-words">
           Momo Hassan-Odukale
         </h1>
-        <p className="mt-6 sm:mt-8 font-sans text-[14px] sm:text-[16px] leading-[1.7] text-ink/65 font-light max-w-md mx-auto">
+        <p className="mt-4 sm:mt-6 font-sans text-[14px] sm:text-[16px] leading-[1.7] text-ink/65 font-light max-w-md mx-auto px-1">
           Momo Hassan-Odukale is a stylist, creative director, and consultant.
         </p>
       </div>
@@ -675,7 +658,7 @@ function LandingView() {
 // ─── About View ───────────────────────────────────────────────────────────────
 function AboutView() {
   return (
-    <Section id="about" className="bg-ink min-h-[100dvh]">
+    <Section id="about" className="bg-ink min-h-[100dvh] pt-[var(--header-h)] md:pt-0">
       <div className="flex flex-col md:flex-row md:min-h-[100dvh]">
         <div className="order-1 md:order-2 w-full md:w-[42%] md:shrink-0 aspect-[4/5] md:aspect-auto md:min-h-[100dvh] overflow-hidden">
           <FadeImg
@@ -686,8 +669,8 @@ function AboutView() {
           />
         </div>
 
-        <div className="order-2 md:order-1 flex-1 flex flex-col justify-end px-5 sm:px-8 md:px-10 py-10 sm:py-12 md:pb-14">
-          <div className="max-w-md md:max-w-[320px]">
+        <div className="order-2 md:order-1 flex-1 flex flex-col justify-end px-5 sm:px-8 md:px-10 py-10 sm:py-12 md:pb-14 md:pt-[var(--header-h)]">
+          <div className="max-w-md">
             {BIO.map((para, i) => (
               <p
                 key={i}
@@ -728,8 +711,8 @@ function GidaView() {
   }
 
   return (
-    <Section id="gida" className="bg-[#e6e2d8] py-16 sm:py-24">
-      <div className="px-5 sm:px-8 md:px-12">
+    <Section id="gida" className="bg-[#e6e2d8] py-16 sm:py-24 pt-[calc(var(--header-h)+2.5rem)]">
+      <div className="px-5 sm:px-8 lg:px-12">
         <div className="max-w-2xl mx-auto animate-fade-up">
           <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-ink-muted mb-5 font-medium">
             GIDA
@@ -762,7 +745,7 @@ function GidaView() {
         </div>
       </div>
 
-      <div className="px-5 sm:px-8 md:px-12 mt-16 sm:mt-20">
+      <div className="px-5 sm:px-8 lg:px-12 mt-16 sm:mt-20">
         <div className="max-w-2xl mx-auto animate-fade-up">
           <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-ink-muted mb-8 font-medium">
             Journal
@@ -824,7 +807,7 @@ function GidaView() {
         </div>
       </div>
 
-      <div className="px-5 sm:px-8 md:px-12 mt-16 sm:mt-24">
+      <div className="px-5 sm:px-8 lg:px-12 mt-16 sm:mt-24">
         <div className="max-w-2xl mx-auto animate-fade-up">
           <p className="font-sans text-[15px] sm:text-[16px] leading-[1.8] text-ink/78 font-light mb-10">
             Subscribe to stay connected with the pulse of African art, design, and culture.
@@ -840,7 +823,7 @@ function GidaView() {
                 type="email"
                 required
                 autoComplete="email"
-                className="mt-2 w-full bg-transparent border-b border-ink/20 py-2.5 font-sans text-[14px] text-ink outline-none focus:border-ink transition-colors"
+                className="mt-2 w-full min-h-11 bg-transparent border-b border-ink/20 py-2.5 font-sans text-[14px] text-ink outline-none focus:border-ink transition-colors"
               />
             </label>
             <label className="block">
@@ -851,7 +834,7 @@ function GidaView() {
                 name="firstName"
                 required
                 autoComplete="given-name"
-                className="mt-2 w-full bg-transparent border-b border-ink/20 py-2.5 font-sans text-[14px] text-ink outline-none focus:border-ink transition-colors"
+                className="mt-2 w-full min-h-11 bg-transparent border-b border-ink/20 py-2.5 font-sans text-[14px] text-ink outline-none focus:border-ink transition-colors"
               />
             </label>
             <button
@@ -872,12 +855,15 @@ function GidaView() {
           </a>
         </div>
       </div>
+
+      <SiteFooter />
     </Section>
   )
 }
 
 // ─── Consultancy View ─────────────────────────────────────────────────────────
-function ConsultancyView({ onContact }: { onContact: () => void }) {
+function ConsultancyView() {
+  const navigate = useNavigate()
   const services = [
     {
       name: "Styling",
@@ -902,7 +888,7 @@ function ConsultancyView({ onContact }: { onContact: () => void }) {
   ]
 
   return (
-    <Section id="consultancy" className="bg-[#f1efe8] px-5 sm:px-8 md:px-12 py-16 sm:py-24">
+    <Section id="consultancy" className="bg-[#f1efe8] px-5 sm:px-8 lg:px-12 py-16 sm:py-24 pt-[calc(var(--header-h)+2.5rem)]">
       <div className="max-w-2xl mx-auto">
         <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-ink-muted mb-6 font-medium">
           Consultancy
@@ -913,15 +899,16 @@ function ConsultancyView({ onContact }: { onContact: () => void }) {
         <p className="font-sans text-[15px] sm:text-[16px] leading-[1.75] text-ink/72 mb-12 max-w-lg font-light">
           Momo offers the following services for brands, artists, and cultural institutions:
         </p>
-        <ol className="border-t border-ink/15">
-          {services.map((service, i) => (
+        <ul className="border-t border-ink/15">
+          {services.map((service) => (
             <li
               key={service.name}
-              className="grid grid-cols-[2.75rem_1fr] gap-4 py-6 border-b border-ink/10"
+              className="grid grid-cols-[1.25rem_1fr] gap-5 py-6 border-b border-ink/10"
             >
-              <span className="font-sans text-[11px] text-ink-muted pt-2 tabular-nums font-medium tracking-[0.06em]">
-                {String(i + 1).padStart(2, "0")}
-              </span>
+              <span
+                aria-hidden="true"
+                className="mt-[0.85rem] h-px w-4 bg-ink/35"
+              />
               <div>
                 <h2 className="font-display text-[24px] sm:text-[28px] tracking-[-0.025em] text-ink mb-2 leading-none">
                   {service.name}
@@ -932,10 +919,10 @@ function ConsultancyView({ onContact }: { onContact: () => void }) {
               </div>
             </li>
           ))}
-        </ol>
+        </ul>
         <button
           type="button"
-          onClick={onContact}
+          onClick={() => navigate("/contact")}
           className="mt-10 font-sans text-[11px] tracking-[0.2em] uppercase border border-ink px-5 py-3 text-ink hover:bg-ink hover:text-paper transition-colors"
         >
           Get in touch
@@ -962,8 +949,8 @@ function ContactView() {
   }
 
   return (
-    <Section id="contact" className="min-h-[100dvh] flex flex-col bg-paper">
-      <div className="px-5 sm:px-8 md:px-12 py-14 sm:py-20 flex-1">
+    <Section id="contact" className="flex flex-col bg-paper pt-[calc(var(--header-h)+2.5rem)]">
+      <div className="px-5 sm:px-8 lg:px-12 py-14 sm:py-20">
         <div className="max-w-xl mx-auto">
           <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-ink-muted mb-5 font-medium">
             Contact
@@ -983,7 +970,7 @@ function ContactView() {
               <input
                 name="name"
                 required
-                className="mt-2 w-full bg-transparent border-b border-ink/20 py-2.5 font-sans text-[14px] text-ink outline-none focus:border-ink transition-colors"
+                className="mt-2 w-full min-h-11 bg-transparent border-b border-ink/20 py-2.5 font-sans text-[14px] text-ink outline-none focus:border-ink transition-colors"
               />
             </label>
             <label className="block">
@@ -994,7 +981,7 @@ function ContactView() {
                 name="email"
                 type="email"
                 required
-                className="mt-2 w-full bg-transparent border-b border-ink/20 py-2.5 font-sans text-[14px] text-ink outline-none focus:border-ink transition-colors"
+                className="mt-2 w-full min-h-11 bg-transparent border-b border-ink/20 py-2.5 font-sans text-[14px] text-ink outline-none focus:border-ink transition-colors"
               />
             </label>
             <label className="block">
@@ -1005,7 +992,7 @@ function ContactView() {
                 name="message"
                 required
                 rows={4}
-                className="mt-2 w-full bg-transparent border-b border-ink/20 py-2.5 font-sans text-[14px] text-ink outline-none focus:border-ink transition-colors resize-y min-h-[6rem]"
+                className="mt-2 w-full min-h-11 bg-transparent border-b border-ink/20 py-2.5 font-sans text-[14px] text-ink outline-none focus:border-ink transition-colors resize-y min-h-[6rem]"
               />
             </label>
             <button
@@ -1054,22 +1041,21 @@ function ContactView() {
   )
 }
 
-function SiteFooter({ onNav }: { onNav: (id: SectionId) => void }) {
+function SiteFooter() {
   return (
-    <div className="border-t border-ink/10 px-5 sm:px-8 py-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 bg-paper pb-[max(1.25rem,env(safe-area-inset-bottom))]">
+    <div className="border-t border-ink/10 px-5 sm:px-8 lg:px-12 py-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 bg-[#e6e2d8] pb-[max(1.25rem,env(safe-area-inset-bottom))]">
       <p className="font-sans text-[9px] text-ink-muted tracking-wider">
         © {new Date().getFullYear()} {NAME} · ALL RIGHTS RESERVED
       </p>
-      <div className="flex flex-wrap gap-4 sm:gap-5">
-        {SECTIONS.map((item) => (
-          <button
+      <div className="flex flex-wrap gap-x-4 gap-y-2 min-w-0">
+        {PAGES.map((item) => (
+          <Link
             key={item.id}
-            type="button"
-            onClick={() => onNav(item.id)}
+            to={item.path}
             className="font-sans text-[9px] text-ink-muted tracking-wider hover:text-ink transition-colors"
           >
             {item.label}
-          </button>
+          </Link>
         ))}
       </div>
       <p className="font-sans text-[9px] text-ink-faint tracking-wider">{LOCATION}</p>
@@ -1115,7 +1101,7 @@ function Lightbox({
 
   return (
     <div
-      className="fixed inset-0 z-[60] bg-ink/97 flex items-center justify-center animate-fade-in pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
+      className="fixed inset-0 z-[80] bg-ink/97 flex items-center justify-center animate-fade-in pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -1174,16 +1160,11 @@ function Lightbox({
 
 // ─── App ──────────────────────────────────────────────────────────────────────
 export default function App() {
-  const [activeSection, setActiveSection] = useState<SectionId>("home")
+  const location = useLocation()
   const [workMode, setWorkMode] = useState<WorkMode>("grid")
   const [activeCategory, setActiveCategory] = useState("All")
   const [activeProject, setActiveProject] = useState<Project | null>(null)
   const [lightbox, setLightbox] = useState<{ images: string[]; index: number } | null>(null)
-
-  const handleNav = (id: SectionId) => {
-    setActiveSection(id)
-    scrollToSection(id)
-  }
 
   const openGallery = (project: Project) => {
     setActiveProject(project)
@@ -1215,6 +1196,10 @@ export default function App() {
   }, [])
 
   useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [location.pathname])
+
+  useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (lightbox) {
         if (e.key === "ArrowLeft") prevImage()
@@ -1235,100 +1220,32 @@ export default function App() {
     }
   }, [lightbox])
 
-  // Scroll spy — highlight whichever section owns the reading line (~1/3 down the view)
-  useEffect(() => {
-    const ids = SECTIONS.map((s) => s.id)
-
-    const apply = (next: SectionId) => {
-      setActiveSection((prev) => (prev === next ? prev : next))
-    }
-
-    const update = () => {
-      if (navLock) {
-        apply(navLock)
-        return
-      }
-
-      const header = document.querySelector("header")
-      const headerH = header instanceof HTMLElement ? header.offsetHeight : headerOffset()
-      const y = Math.min(
-        window.innerHeight - 16,
-        Math.max(headerH + 24, headerH + (window.innerHeight - headerH) * 0.38),
-      )
-      const x = Math.max(8, Math.floor(window.innerWidth * 0.45))
-
-      if (header instanceof HTMLElement) header.style.pointerEvents = "none"
-      const hit = document.elementFromPoint(x, y)
-      if (header instanceof HTMLElement) header.style.pointerEvents = ""
-
-      const section = hit instanceof Element ? hit.closest("section[id]") : null
-      if (section?.id === "home") {
-        apply("home")
-        return
-      }
-      if (section?.id && ids.includes(section.id as SectionId)) {
-        apply(section.id as SectionId)
-        return
-      }
-
-      const home = document.getElementById("home")
-      if (home) {
-        const rect = home.getBoundingClientRect()
-        if (rect.top <= y && rect.bottom > y) {
-          apply("home")
-          return
-        }
-      }
-
-      let current: SectionId = ids[0]
-      for (const id of ids) {
-        const el = document.getElementById(id)
-        if (!el) continue
-        const rect = el.getBoundingClientRect()
-        if (rect.top <= y && rect.bottom > y) {
-          current = id
-          break
-        }
-        if (rect.top <= y) current = id
-      }
-      apply(current)
-    }
-
-    update()
-    window.addEventListener("scroll", update, { passive: true })
-    window.addEventListener("resize", update)
-    return () => {
-      window.removeEventListener("scroll", update)
-      window.removeEventListener("resize", update)
-    }
-  }, [])
-
   return (
-    <div className="min-h-[100dvh] bg-paper text-ink">
-      <Nav
-        activeSection={activeSection}
-        onNav={handleNav}
-        workMode={workMode}
-        activeCategory={activeCategory}
-        onWorkMode={setWorkMode}
-        onCategory={setActiveCategory}
-      />
+    <div className={`min-h-[100dvh] ${location.pathname === "/about" ? "bg-ink text-paper" : "bg-paper text-ink"}`}>
+      <Nav />
 
       <main>
-        <LandingView />
-        <AboutView />
-        <WorkSection
-          mode={workMode}
-          activeCategory={activeCategory}
-          onOpen={openGallery}
-          onLightbox={openLightbox}
-        />
-        <ConsultancyView onContact={() => handleNav("contact")} />
-        <ContactView />
-        <GidaView />
+        <Routes>
+          <Route path="/" element={<LandingView />} />
+          <Route path="/about" element={<AboutView />} />
+          <Route
+            path="/work"
+            element={
+              <WorkSection
+                mode={workMode}
+                activeCategory={activeCategory}
+                onWorkMode={setWorkMode}
+                onCategory={setActiveCategory}
+                onOpen={openGallery}
+                onLightbox={openLightbox}
+              />
+            }
+          />
+          <Route path="/consultancy" element={<ConsultancyView />} />
+          <Route path="/contact" element={<ContactView />} />
+          <Route path="/gida" element={<GidaView />} />
+        </Routes>
       </main>
-
-      <SiteFooter onNav={handleNav} />
 
       {activeProject && (
         <GalleryOverlay
