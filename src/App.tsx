@@ -658,9 +658,12 @@ function LandingView() {
 // ─── About View ───────────────────────────────────────────────────────────────
 function AboutView() {
   return (
-    <Section id="about" className="bg-ink min-h-[100dvh] pt-[var(--header-h)] md:pt-0">
-      <div className="flex flex-col md:flex-row md:min-h-[100dvh]">
-        <div className="order-1 md:order-2 w-full md:w-[42%] md:shrink-0 aspect-[4/5] md:aspect-auto md:min-h-[100dvh] overflow-hidden">
+    <Section
+      id="about"
+      className="bg-ink min-h-[100dvh] pt-[var(--header-h)] md:h-[100dvh] md:min-h-0 md:pt-0 md:overflow-hidden"
+    >
+      <div className="flex flex-col md:flex-row md:h-full">
+        <div className="order-1 md:order-2 w-full md:w-[42%] md:shrink-0 aspect-[4/5] md:aspect-auto md:h-full md:min-h-0 overflow-hidden">
           <FadeImg
             src={ABOUT_IMAGE}
             alt={NAME}
@@ -669,17 +672,17 @@ function AboutView() {
           />
         </div>
 
-        <div className="order-2 md:order-1 flex-1 flex flex-col justify-end px-5 sm:px-8 md:px-10 py-10 sm:py-12 md:pb-14 md:pt-[var(--header-h)]">
+        <div className="order-2 md:order-1 flex-1 flex flex-col justify-end px-5 sm:px-8 md:px-10 py-10 sm:py-12 md:h-full md:min-h-0 md:py-8 md:pt-[calc(var(--header-h)+0.75rem)]">
           <div className="max-w-md">
             {BIO.map((para, i) => (
               <p
                 key={i}
-                className={`font-sans text-[15px] sm:text-[16px] leading-[1.8] text-paper/78 font-light ${i > 0 ? "mt-5" : ""}`}
+                className={`font-sans text-[15px] sm:text-[16px] md:text-[14px] lg:text-[15px] leading-[1.8] md:leading-[1.65] text-paper/78 font-light ${i > 0 ? "mt-5" : ""}`}
               >
                 {para}
               </p>
             ))}
-            <div className="mt-8 pt-7 border-t border-paper/10">
+            <div className="mt-8 pt-7 md:mt-6 md:pt-5 border-t border-paper/10">
               <p className="font-sans text-[10px] tracking-[0.16em] uppercase text-paper/40 mb-2 font-medium">
                 Services
               </p>
