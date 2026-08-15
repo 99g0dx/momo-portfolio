@@ -270,6 +270,7 @@ function Nav() {
   }, [menuOpen, closeMenu])
 
   const isAbout = location.pathname === "/about"
+  const isHome = location.pathname === "/"
 
   const menuItemCls = (active: boolean) =>
     `block w-full text-left font-sans text-[11px] tracking-[0.16em] uppercase px-3 py-2 border-b transition-opacity font-medium ${
@@ -298,18 +299,20 @@ function Nav() {
         }`}
       >
         <div className="relative flex items-center justify-end px-4 sm:px-6 md:px-8 py-2.5 sm:py-3">
-          <Link
-            to="/"
-            onClick={closeMenu}
-            aria-label={NAME}
-            className="absolute left-1/2 -translate-x-1/2 z-10 shrink-0 transition-opacity hover:opacity-55"
-          >
-            <img
-              src={LOGO}
-              alt={NAME}
-              className={`h-14 sm:h-16 md:h-[4.5rem] w-auto object-contain ${isAbout ? "invert" : ""}`}
-            />
-          </Link>
+          {!isHome ? (
+            <Link
+              to="/"
+              onClick={closeMenu}
+              aria-label={NAME}
+              className="absolute left-1/2 -translate-x-1/2 z-10 shrink-0 transition-opacity hover:opacity-55"
+            >
+              <img
+                src={LOGO}
+                alt={NAME}
+                className={`h-14 sm:h-16 md:h-[4.5rem] w-auto object-contain ${isAbout ? "invert" : ""}`}
+              />
+            </Link>
+          ) : null}
 
           <nav className="hidden md:flex items-center gap-x-2 lg:gap-x-2.5" aria-label="Primary">
             {NAV_LINKS.map((item) => (
@@ -636,7 +639,7 @@ function LandingView() {
   return (
     <Section
       id="home"
-      className="min-h-[100dvh] flex items-center justify-center bg-paper px-5 sm:px-8 lg:px-12 pt-[var(--header-h)]"
+      className="h-[100dvh] flex items-center justify-center bg-paper px-5 sm:px-8 lg:px-12"
     >
       <div className="max-w-3xl mx-auto text-center animate-fade-up w-full">
         <img
