@@ -711,7 +711,7 @@ function GidaView() {
   }
 
   return (
-    <Section id="gida" className="bg-[#e6e2d8] py-16 sm:py-24 pt-[calc(var(--header-h)+2.5rem)]">
+    <Section id="gida" className="bg-paper py-16 sm:py-24 pt-[calc(var(--header-h)+2.5rem)]">
       <div className="px-5 sm:px-8 lg:px-12">
         <div className="max-w-2xl mx-auto animate-fade-up">
           <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-ink-muted mb-5 font-medium">
@@ -1043,7 +1043,7 @@ function ContactView() {
 
 function SiteFooter() {
   return (
-    <div className="border-t border-ink/10 px-5 sm:px-8 lg:px-12 py-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 bg-[#e6e2d8] pb-[max(1.25rem,env(safe-area-inset-bottom))]">
+    <div className="border-t border-ink/10 px-5 sm:px-8 lg:px-12 py-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 bg-paper pb-[max(1.25rem,env(safe-area-inset-bottom))]">
       <p className="font-sans text-[9px] text-ink-muted tracking-wider">
         © {new Date().getFullYear()} {NAME} · ALL RIGHTS RESERVED
       </p>
