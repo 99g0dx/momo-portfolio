@@ -6,6 +6,7 @@ import {
   type FormEvent,
   type ReactNode,
   type TouchEvent,
+  type MouseEvent,
 } from "react"
 import { Link, NavLink, Route, Routes, useLocation, useNavigate } from "react-router-dom"
 import { projects, type Project } from "./data/projects"
@@ -75,6 +76,7 @@ function FadeImg({
   loading = "lazy",
   sizes,
   srcSet,
+  onClick,
 }: {
   src: string
   alt: string
@@ -82,6 +84,7 @@ function FadeImg({
   loading?: "lazy" | "eager"
   sizes?: string
   srcSet?: string
+  onClick?: (e: MouseEvent<HTMLImageElement>) => void
 }) {
   const [loaded, setLoaded] = useState(false)
 
@@ -94,6 +97,7 @@ function FadeImg({
       loading={loading}
       decoding="async"
       onLoad={() => setLoaded(true)}
+      onClick={onClick}
       className={`img-fade ${loaded ? "is-loaded" : ""} ${className}`}
     />
   )
@@ -198,12 +202,12 @@ function WorkToolbar({
   onCategory: (c: string) => void
 }) {
   const tagCls = (active: boolean) =>
-    `font-sans text-[11px] sm:text-[10.5px] tracking-[0.14em] uppercase px-1.5 py-1 transition-opacity duration-200 shrink-0 inline-flex items-center font-medium ${
+    `font-sans text-[8px] sm:text-[10.5px] tracking-[0.08em] sm:tracking-[0.14em] uppercase px-1 py-0.5 sm:px-1.5 sm:py-1 transition-opacity duration-200 shrink-0 inline-flex items-center font-medium ${
       active ? "text-ink" : "text-ink/38 hover:text-ink"
     }`
 
   return (
-    <div className="px-2 sm:px-4 md:px-6 py-2 flex items-center gap-2 sm:gap-3">
+    <div className="px-2 sm:px-4 md:px-6 py-1.5 sm:py-2 flex items-center gap-1.5 sm:gap-3">
       <ChipScroller>
         {allCategories.map((cat) => (
           <button
@@ -216,7 +220,7 @@ function WorkToolbar({
           </button>
         ))}
       </ChipScroller>
-      <div className="flex gap-3 shrink-0 pl-3 ml-1 border-l border-ink/15">
+      <div className="flex gap-1.5 sm:gap-3 shrink-0 pl-2 sm:pl-3 ml-1 border-l border-ink/15">
         {(["grid", "list", "index"] as WorkMode[]).map((m) => (
           <button key={m} type="button" onClick={() => onWorkMode(m)} className={tagCls(mode === m)}>
             {m}
@@ -379,7 +383,7 @@ function Nav() {
 // ─── Grid Mode ────────────────────────────────────────────────────────────────
 function WorkGrid({ filtered, onOpen }: { filtered: Project[]; onOpen: (p: Project) => void }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-3 sm:gap-x-4 gap-y-8 sm:gap-y-10">
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-x-2 sm:gap-x-4 gap-y-5 sm:gap-y-10">
       {filtered.map((p, i) => (
         <button
           key={p.id}
@@ -388,26 +392,26 @@ function WorkGrid({ filtered, onOpen }: { filtered: Project[]; onOpen: (p: Proje
           className="group text-left w-full animate-fade-up"
           style={{ animationDelay: `${Math.min(i, 8) * 40}ms` }}
         >
-          <div className="overflow-hidden bg-ink/8 mb-3 w-full aspect-[3/4]">
+          <div className="overflow-hidden bg-ink/8 mb-2 sm:mb-3 w-full aspect-[3/4]">
             <FadeImg
               src={imgUrl(p.coverImage, 600)}
               srcSet={`${imgUrl(p.coverImage, 400)} 400w, ${imgUrl(p.coverImage, 700)} 700w, ${imgUrl(p.coverImage, 1000)} 1000w`}
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
               alt={p.title}
               className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04] group-active:scale-[1.02]"
               loading={i < 4 ? "eager" : "lazy"}
             />
           </div>
           <div className="flex items-baseline justify-between gap-2">
-            <p className="font-display text-[17px] sm:text-[18px] tracking-[-0.015em] text-ink leading-snug min-w-0 break-words">
+            <p className="font-display text-[13px] sm:text-[18px] tracking-[-0.015em] text-ink leading-snug min-w-0 break-words">
               {p.title}
             </p>
-            <p className="font-sans text-[11px] text-ink-muted shrink-0 font-normal">{p.year}</p>
+            <p className="font-sans text-[9px] sm:text-[11px] text-ink-muted shrink-0 font-normal">{p.year}</p>
           </div>
-          <p className="font-sans text-[10.5px] text-ink-muted mt-1.5 tracking-[0.12em] uppercase font-medium">
+          <p className="font-sans text-[7.5px] sm:text-[10.5px] text-ink-muted mt-1 tracking-[0.06em] sm:tracking-[0.12em] uppercase font-medium">
             {projectCredit(p)}
           </p>
-          <div className="mt-3 h-px bg-ink/10" />
+          <div className="mt-2 sm:mt-3 h-px bg-ink/10" />
         </button>
       ))}
     </div>
@@ -440,15 +444,15 @@ function WorkList({ filtered, onOpen }: { filtered: Project[]; onOpen: (p: Proje
                 opacity: active ? 0.13 : 0,
               }}
             />
-            <div className="relative z-10 flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-4 py-4 sm:py-5 border-b border-ink/10 min-h-14">
-              <p className="font-display text-[19px] sm:text-[21px] tracking-[-0.02em] text-ink flex-1 leading-[1.1] min-w-0 break-words">
+            <div className="relative z-10 flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4 py-2.5 sm:py-5 border-b border-ink/10 min-h-0 sm:min-h-14">
+              <p className="font-display text-[15px] sm:text-[21px] tracking-[-0.02em] text-ink flex-1 leading-[1.15] min-w-0 break-words">
                 {p.title}
               </p>
-              <div className="flex items-center gap-3 sm:gap-4">
-                <p className="font-sans text-[10.5px] tracking-[0.12em] uppercase text-ink-muted shrink-0 font-medium">
+              <div className="flex items-center gap-2 sm:gap-4">
+                <p className="font-sans text-[8px] sm:text-[10.5px] tracking-[0.08em] sm:tracking-[0.12em] uppercase text-ink-muted min-w-0 font-medium">
                   {projectCredit(p)}
                 </p>
-                <p className="font-sans text-[11px] text-ink-muted shrink-0 sm:w-10 sm:text-right">
+                <p className="font-sans text-[9px] sm:text-[11px] text-ink-muted shrink-0 sm:w-10 sm:text-right">
                   {p.year}
                 </p>
                 <span
@@ -476,20 +480,20 @@ function WorkIndex({
   onLightbox: (src: string, all: string[]) => void
 }) {
   return (
-    <div className="space-y-10 sm:space-y-14">
+    <div className="space-y-6 sm:space-y-14">
       {filtered.map((p) => (
         <div key={p.id}>
-          <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4 mb-3 sm:mb-4">
-            <h2 className="font-display text-[22px] sm:text-[26px] tracking-[-0.02em] text-ink leading-none min-w-0 break-words">
+          <div className="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4 mb-2 sm:mb-4">
+            <h2 className="font-display text-[16px] sm:text-[26px] tracking-[-0.02em] text-ink leading-snug min-w-0 break-words">
               {p.title}
             </h2>
-            <p className="font-sans text-[10.5px] tracking-[0.12em] uppercase text-ink-muted shrink-0 font-medium">
+            <p className="font-sans text-[7.5px] sm:text-[10.5px] tracking-[0.06em] sm:tracking-[0.12em] uppercase text-ink-muted shrink-0 font-medium">
               {projectCredit(p)}
               <span className="mx-1.5 opacity-50">·</span>
               {p.year}
             </p>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-0.5">
+          <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-0.5">
             {p.images.map((src, i) => (
               <button
                 key={i}
@@ -500,7 +504,7 @@ function WorkIndex({
                 <FadeImg
                   src={imgUrl(src, 300, 300)}
                   srcSet={`${imgUrl(src, 200, 200)} 200w, ${imgUrl(src, 400, 400)} 400w`}
-                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
+                  sizes="(max-width: 640px) 33vw, (max-width: 1024px) 25vw, 16vw"
                   alt={`${p.title} ${i + 1}`}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.06] group-active:scale-[1.03]"
                 />
@@ -545,7 +549,7 @@ function WorkSection({
         />
         <div className="h-px bg-ink/10" />
       </div>
-      <div className="px-4 sm:px-6 md:px-8 pt-6 sm:pt-8">
+      <div className="px-3 sm:px-6 md:px-8 pt-4 sm:pt-8">
         <div key={`${mode}-${activeCategory}`} className="animate-fade-up">
           {mode === "grid" && <WorkGrid filtered={filtered} onOpen={onOpen} />}
           {mode === "list" && <WorkList filtered={filtered} onOpen={onOpen} />}
@@ -576,28 +580,37 @@ function GalleryOverlay({
 
   return (
     <div className="fixed inset-0 z-[70] bg-paper animate-fade-in overflow-y-auto pt-[env(safe-area-inset-top)]">
-      <div className="sticky top-0 z-10 bg-paper/96 backdrop-blur-md border-b border-ink/10 px-4 sm:px-6 md:px-8 py-4 flex items-center justify-between">
+      <div className="sticky top-0 z-10 bg-paper/96 backdrop-blur-md border-b border-ink/10 px-3 sm:px-6 md:px-8 py-2.5 sm:py-3 relative flex items-center justify-between gap-3">
         <button
           type="button"
           onClick={onClose}
-          className="font-sans text-[10px] tracking-[0.2em] uppercase text-ink-muted hover:text-ink transition-colors min-h-9"
+          className="font-sans text-[8px] sm:text-[9px] tracking-[0.16em] uppercase text-ink-muted hover:text-ink transition-colors min-h-0 py-0.5 shrink-0 z-10"
         >
           ← Close
         </button>
-        <p className="font-display text-[17px] tracking-[-0.015em] text-ink">
-          {project.title}
-        </p>
-        <span className="w-16" />
+        <Link
+          to="/"
+          onClick={onClose}
+          aria-label={NAME}
+          className="absolute left-1/2 -translate-x-1/2 z-10 shrink-0 transition-opacity hover:opacity-55"
+        >
+          <img
+            src={LOGO}
+            alt={NAME}
+            className="h-14 sm:h-16 md:h-[4.5rem] w-auto object-contain"
+          />
+        </Link>
+        <span className="w-12 sm:w-16 shrink-0" />
       </div>
 
-      <div className="px-4 sm:px-6 md:px-8 py-6 sm:py-8 pb-20">
-        <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+      <div className="px-3 sm:px-6 md:px-8 py-4 sm:py-8 pb-20">
+        <div className="mb-4 sm:mb-6 flex flex-col gap-1.5 sm:flex-row sm:items-end sm:justify-between sm:gap-2">
           <div>
-            <h1 className="font-display text-[32px] sm:text-[40px] tracking-[-0.025em] text-ink leading-[1.05]">
+            <h1 className="font-display text-[20px] sm:text-[40px] tracking-[-0.025em] text-ink leading-[1.05]">
               {project.title}
             </h1>
           </div>
-          <p className="font-sans text-[10.5px] text-ink-muted tracking-[0.12em] uppercase sm:text-right font-medium">
+          <p className="font-sans text-[8px] sm:text-[10.5px] text-ink-muted tracking-[0.08em] sm:tracking-[0.12em] uppercase sm:text-right font-medium">
             {projectCredit(project)}
             <span className="mx-1.5 opacity-40">·</span>
             {project.year}
@@ -675,21 +688,21 @@ function AboutView() {
           />
         </div>
 
-        <div className="order-2 md:order-1 flex-1 flex flex-col justify-end px-5 sm:px-8 md:px-10 py-10 sm:py-12 md:h-full md:min-h-0 md:py-8 md:pt-[calc(var(--header-h)+0.75rem)]">
+        <div className="order-2 md:order-1 flex-1 flex flex-col justify-end px-5 sm:px-8 md:px-10 py-6 sm:py-12 md:h-full md:min-h-0 md:py-8 md:pt-[calc(var(--header-h)+0.75rem)]">
           <div className="max-w-md">
             {BIO.map((para, i) => (
               <p
                 key={i}
-                className={`font-sans text-[15px] sm:text-[16px] md:text-[14px] lg:text-[15px] leading-[1.8] md:leading-[1.65] text-paper/78 font-light ${i > 0 ? "mt-5" : ""}`}
+                className={`font-sans text-[13px] sm:text-[16px] md:text-[14px] lg:text-[15px] leading-[1.7] md:leading-[1.65] text-paper/78 font-light ${i > 0 ? "mt-5" : ""}`}
               >
                 {para}
               </p>
             ))}
-            <div className="mt-8 pt-7 md:mt-6 md:pt-5 border-t border-paper/10">
+            <div className="mt-6 pt-5 sm:mt-8 sm:pt-7 md:mt-6 md:pt-5 border-t border-paper/10">
               <p className="font-sans text-[10px] tracking-[0.16em] uppercase text-paper/40 mb-2 font-medium">
                 Services
               </p>
-              <p className="font-sans text-[13px] sm:text-[14px] text-paper/65 leading-relaxed font-light">
+              <p className="font-sans text-[12px] sm:text-[14px] text-paper/65 leading-relaxed font-light">
                 {SERVICES.join(" · ")}
               </p>
             </div>
@@ -894,32 +907,35 @@ function ConsultancyView() {
   ]
 
   return (
-    <Section id="consultancy" className="bg-[#f1efe8] px-5 sm:px-8 lg:px-12 py-16 sm:py-24 pt-[calc(var(--header-h)+2.5rem)]">
+    <Section
+      id="consultancy"
+      className="bg-paper min-h-[100dvh] px-5 sm:px-8 lg:px-12 pt-[calc(var(--header-h)+1rem)] sm:pt-[calc(var(--header-h)+2.5rem)] pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:pb-24"
+    >
       <div className="max-w-2xl mx-auto">
-        <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-ink-muted mb-6 font-medium">
+        <p className="font-sans text-[9px] sm:text-[10px] tracking-[0.18em] uppercase text-ink-muted mb-2 sm:mb-6 font-medium">
           Consultancy
         </p>
-        <h1 className="font-display text-[clamp(2.25rem,5vw,3.4rem)] tracking-[-0.03em] text-ink leading-[1.08] mb-5">
+        <h1 className="font-display text-[1.5rem] sm:text-[clamp(1.75rem,5vw,3.4rem)] tracking-[-0.03em] text-ink leading-[1.08] mb-3 sm:mb-5">
           Consultancy
         </h1>
-        <p className="font-sans text-[15px] sm:text-[16px] leading-[1.75] text-ink/72 mb-12 max-w-lg font-light">
+        <p className="font-sans text-[12px] sm:text-[16px] leading-[1.55] sm:leading-[1.75] text-ink/72 mb-6 sm:mb-12 max-w-lg font-light">
           Momo offers the following services for brands, artists, and cultural institutions:
         </p>
         <ul className="border-t border-ink/15">
           {services.map((service) => (
             <li
               key={service.name}
-              className="grid grid-cols-[1.25rem_1fr] gap-5 py-6 border-b border-ink/10"
+              className="grid grid-cols-[0.9rem_1fr] sm:grid-cols-[1.25rem_1fr] gap-3 sm:gap-5 py-2.5 sm:py-6 border-b border-ink/10"
             >
               <span
                 aria-hidden="true"
-                className="mt-[0.85rem] h-px w-4 bg-ink/35"
+                className="mt-[0.55rem] sm:mt-[0.85rem] h-px w-3 sm:w-4 bg-ink/35"
               />
               <div>
-                <h2 className="font-display text-[24px] sm:text-[28px] tracking-[-0.025em] text-ink mb-2 leading-none">
+                <h2 className="font-display text-[16px] sm:text-[28px] tracking-[-0.025em] text-ink mb-1 sm:mb-2 leading-snug">
                   {service.name}
                 </h2>
-                <p className="font-sans text-[14px] sm:text-[15px] leading-7 text-ink/68 font-light max-w-md">
+                <p className="font-sans text-[12px] sm:text-[15px] leading-5 sm:leading-7 text-ink/68 font-light max-w-md">
                   {service.description}
                 </p>
               </div>
@@ -929,7 +945,7 @@ function ConsultancyView() {
         <button
           type="button"
           onClick={() => navigate("/contact")}
-          className="mt-10 font-sans text-[11px] tracking-[0.2em] uppercase border border-ink px-5 py-3 text-ink hover:bg-ink hover:text-paper transition-colors"
+          className="mt-6 sm:mt-10 font-sans text-[10px] sm:text-[11px] tracking-[0.2em] uppercase border border-ink px-4 py-2 sm:px-5 sm:py-3 text-ink hover:bg-ink hover:text-paper transition-colors"
         >
           Get in touch
         </button>
@@ -955,55 +971,58 @@ function ContactView() {
   }
 
   return (
-    <Section id="contact" className="flex flex-col bg-paper pt-[calc(var(--header-h)+2.5rem)]">
-      <div className="px-5 sm:px-8 lg:px-12 py-14 sm:py-20">
+    <Section
+      id="contact"
+      className="flex flex-col bg-paper min-h-[100dvh] pt-[calc(var(--header-h)+2.5rem)] pb-[max(1.5rem,env(safe-area-inset-bottom))]"
+    >
+      <div className="px-5 sm:px-8 lg:px-12 py-8 sm:py-20">
         <div className="max-w-xl mx-auto">
           <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-ink-muted mb-5 font-medium">
             Contact
           </p>
-          <h1 className="font-display text-[clamp(2.35rem,5.5vw,3.5rem)] text-ink mb-4 tracking-[-0.03em] leading-[1.05]">
+          <h1 className="font-display text-[clamp(1.75rem,8vw,3.5rem)] text-ink mb-4 tracking-[-0.03em] leading-[1.05]">
             Get in touch
           </h1>
-          <p className="font-sans text-[15px] sm:text-[16px] text-ink/70 leading-[1.75] mb-12 max-w-md font-light">
+          <p className="font-sans text-[13px] sm:text-[16px] text-ink/70 leading-[1.75] mb-8 sm:mb-12 max-w-md font-light">
             For commissions, GIDA, consultancy, or press — send a note or reach out on Instagram.
           </p>
 
-          <form onSubmit={onSubmit} className="space-y-5 mb-12">
+          <form onSubmit={onSubmit} className="space-y-3 sm:space-y-5 mb-6 sm:mb-12">
             <label className="block">
-              <span className="font-sans text-[10px] tracking-[0.16em] uppercase text-ink-muted font-medium">
+              <span className="font-sans text-[9px] sm:text-[10px] tracking-[0.16em] uppercase text-ink-muted font-medium">
                 Name
               </span>
               <input
                 name="name"
                 required
-                className="mt-2 w-full min-h-11 bg-transparent border-b border-ink/20 py-2.5 font-sans text-[14px] text-ink outline-none focus:border-ink transition-colors"
+                className="mt-1 sm:mt-2 w-full min-h-9 sm:min-h-11 bg-transparent border-b border-ink/20 py-1.5 sm:py-2.5 font-sans text-[13px] sm:text-[14px] text-ink outline-none focus:border-ink transition-colors"
               />
             </label>
             <label className="block">
-              <span className="font-sans text-[10px] tracking-[0.16em] uppercase text-ink-muted font-medium">
+              <span className="font-sans text-[9px] sm:text-[10px] tracking-[0.16em] uppercase text-ink-muted font-medium">
                 Email
               </span>
               <input
                 name="email"
                 type="email"
                 required
-                className="mt-2 w-full min-h-11 bg-transparent border-b border-ink/20 py-2.5 font-sans text-[14px] text-ink outline-none focus:border-ink transition-colors"
+                className="mt-1 sm:mt-2 w-full min-h-9 sm:min-h-11 bg-transparent border-b border-ink/20 py-1.5 sm:py-2.5 font-sans text-[13px] sm:text-[14px] text-ink outline-none focus:border-ink transition-colors"
               />
             </label>
             <label className="block">
-              <span className="font-sans text-[10px] tracking-[0.16em] uppercase text-ink-muted font-medium">
+              <span className="font-sans text-[9px] sm:text-[10px] tracking-[0.16em] uppercase text-ink-muted font-medium">
                 Message
               </span>
               <textarea
                 name="message"
                 required
-                rows={4}
-                className="mt-2 w-full min-h-11 bg-transparent border-b border-ink/20 py-2.5 font-sans text-[14px] text-ink outline-none focus:border-ink transition-colors resize-y min-h-[6rem]"
+                rows={3}
+                className="mt-1 sm:mt-2 w-full bg-transparent border-b border-ink/20 py-1.5 sm:py-2.5 font-sans text-[13px] sm:text-[14px] text-ink outline-none focus:border-ink transition-colors resize-y min-h-[4rem] sm:min-h-[6rem]"
               />
             </label>
             <button
               type="submit"
-              className="font-sans text-[11px] tracking-[0.2em] uppercase text-ink hover:opacity-45 transition-opacity"
+              className="font-sans text-[10px] sm:text-[11px] tracking-[0.2em] uppercase text-ink hover:opacity-45 transition-opacity"
             >
               {sent ? "Opening mail…" : "Send message →"}
             </button>
@@ -1016,7 +1035,7 @@ function ContactView() {
               </p>
               <a
                 href={`mailto:${EMAIL}`}
-                className="font-sans text-[14px] text-ink hover:opacity-45 transition-opacity"
+                className="font-sans text-[13px] text-ink hover:opacity-45 transition-opacity"
               >
                 {EMAIL}
               </a>
@@ -1064,7 +1083,7 @@ function SiteFooter() {
           </Link>
         ))}
       </div>
-      <p className="font-sans text-[9px] text-ink-faint tracking-wider">{LOCATION}</p>
+      <p className="font-sans text-[11px] text-ink-muted tracking-wider">{LOCATION}</p>
     </div>
   )
 }
@@ -1085,6 +1104,26 @@ function Lightbox({
 }) {
   const touchStartX = useRef<number | null>(null)
   const touchDelta = useRef(0)
+  const didSwipe = useRef(false)
+
+  const clickOnVisibleImage = (e: MouseEvent<HTMLImageElement>) => {
+    const img = e.currentTarget
+    const rect = img.getBoundingClientRect()
+    const nw = img.naturalWidth
+    const nh = img.naturalHeight
+    if (!nw || !nh) return true
+    const scale = Math.min(rect.width / nw, rect.height / nh)
+    const dw = nw * scale
+    const dh = nh * scale
+    const left = rect.left + (rect.width - dw) / 2
+    const top = rect.top + (rect.height - dh) / 2
+    return (
+      e.clientX >= left &&
+      e.clientX <= left + dw &&
+      e.clientY >= top &&
+      e.clientY <= top + dh
+    )
+  }
 
   const onTouchStart = (e: TouchEvent) => {
     touchStartX.current = e.touches[0]?.clientX ?? null
@@ -1097,7 +1136,9 @@ function Lightbox({
   }
 
   const onTouchEnd = () => {
-    if (Math.abs(touchDelta.current) > 50) {
+    const swiped = Math.abs(touchDelta.current) > 50
+    didSwipe.current = swiped
+    if (swiped) {
       if (touchDelta.current > 0) onPrev()
       else onNext()
     }
@@ -1114,8 +1155,8 @@ function Lightbox({
       aria-label="Image viewer"
     >
       <div
-        className="relative w-full h-full flex items-center justify-center px-3 sm:px-10 py-14 sm:py-10"
-        onClick={(e) => e.stopPropagation()}
+        className="relative w-full h-full flex items-center justify-center px-0 pt-9 pb-7 sm:px-10 sm:py-10"
+        onClick={onClose}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
@@ -1126,12 +1167,23 @@ function Lightbox({
           srcSet={`${images[index]?.split("?")[0]}?w=800&fit=max&auto=format&q=80 800w, ${images[index]?.split("?")[0]}?w=1600&fit=max&auto=format&q=85 1600w`}
           sizes="100vw"
           alt={`Image ${index + 1}`}
-          className="max-w-full max-h-full object-contain select-none animate-scale-in"
+          className="w-full h-full max-w-full max-h-full object-contain select-none animate-scale-in !h-full"
           loading="eager"
+          onClick={(e) => {
+            e.stopPropagation()
+            if (didSwipe.current) {
+              didSwipe.current = false
+              return
+            }
+            if (!clickOnVisibleImage(e)) onClose()
+          }}
         />
         <button
           type="button"
-          onClick={onClose}
+          onClick={(e) => {
+            e.stopPropagation()
+            onClose()
+          }}
           className="absolute top-4 right-4 sm:top-5 sm:right-6 font-sans text-[10px] sm:text-[9px] tracking-[0.22em] uppercase text-paper/50 hover:text-paper transition-colors min-h-10 min-w-10 px-2"
         >
           Close
@@ -1140,17 +1192,23 @@ function Lightbox({
           <>
             <button
               type="button"
-              onClick={onPrev}
+              onClick={(e) => {
+                e.stopPropagation()
+                onPrev()
+              }}
               aria-label="Previous image"
-              className="absolute left-1 sm:left-4 top-1/2 -translate-y-1/2 text-paper/50 hover:text-paper transition-colors p-3 sm:p-4 text-xl min-h-12 min-w-12"
+              className="absolute left-0 sm:left-4 top-1/2 -translate-y-1/2 text-paper/50 hover:text-paper transition-colors p-2 sm:p-4 text-lg sm:text-xl min-h-10 min-w-10 sm:min-h-12 sm:min-w-12"
             >
               ←
             </button>
             <button
               type="button"
-              onClick={onNext}
+              onClick={(e) => {
+                e.stopPropagation()
+                onNext()
+              }}
               aria-label="Next image"
-              className="absolute right-1 sm:right-4 top-1/2 -translate-y-1/2 text-paper/50 hover:text-paper transition-colors p-3 sm:p-4 text-xl min-h-12 min-w-12"
+              className="absolute right-0 sm:right-4 top-1/2 -translate-y-1/2 text-paper/50 hover:text-paper transition-colors p-2 sm:p-4 text-lg sm:text-xl min-h-10 min-w-10 sm:min-h-12 sm:min-w-12"
             >
               →
             </button>
@@ -1225,6 +1283,17 @@ export default function App() {
       document.body.style.overflow = ""
     }
   }, [lightbox])
+
+  useEffect(() => {
+    const about = location.pathname === "/about"
+    const fill = about ? "var(--color-ink)" : "var(--color-paper)"
+    document.documentElement.style.background = fill
+    document.body.style.background = fill
+    return () => {
+      document.documentElement.style.background = ""
+      document.body.style.background = ""
+    }
+  }, [location.pathname])
 
   return (
     <div className={`min-h-[100dvh] ${location.pathname === "/about" ? "bg-ink text-paper" : "bg-paper text-ink"}`}>

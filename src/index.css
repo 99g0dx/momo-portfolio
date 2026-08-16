@@ -54,6 +54,7 @@
     text-size-adjust: 100%;
     scroll-behavior: smooth;
     scroll-padding-top: var(--header-h);
+    background: var(--color-paper);
   }
 
   body {
@@ -236,13 +237,13 @@
   }
 }
 
-/* Menu toggle — 44px hit area on all screens */
+/* Menu toggle — compact on mobile */
 .menu-toggle {
   align-content: center;
-  gap: 5px;
-  width: 2.75rem;
-  height: 2.75rem;
-  padding: 0.7rem 0.65rem;
+  gap: 3px;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0.32rem 0.28rem;
   border: 1px solid color-mix(in srgb, var(--color-ink) 18%, transparent);
   background: transparent;
   transition: border-color 0.2s ease, background-color 0.2s ease;
@@ -280,7 +281,7 @@
 }
 
 .menu-toggle__line.is-open:nth-child(1) {
-  transform: translateY(6px) rotate(45deg);
+  transform: translateY(3.5px) rotate(45deg);
 }
 
 .menu-toggle__line.is-open:nth-child(2) {
@@ -288,7 +289,7 @@
 }
 
 .menu-toggle__line.is-open:nth-child(3) {
-  transform: translateY(-6px) rotate(-45deg);
+  transform: translateY(-3.5px) rotate(-45deg);
 }
 
 /* GIDA archival image sequence */
