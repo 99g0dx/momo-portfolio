@@ -1,15 +1,3 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// GIDA HUB — edit this file to update the GIDA section
-//
-// VOLUMES / PROGRAMMING:
-//   Replace the placeholder rows below with real titles, years, and regions.
-//   Order in each array = order on screen.
-//
-// SUBSCRIBE:
-//   Set `subscribeUrl` to the live newsletter / Typeform / Beehiiv link.
-//   Until then it opens @gidajournal.
-// ─────────────────────────────────────────────────────────────────────────────
-
 export const gidaInstagram = "https://instagram.com/gidajournal"
 export const gidaSubscribeUrl = "https://instagram.com/gidajournal"
 

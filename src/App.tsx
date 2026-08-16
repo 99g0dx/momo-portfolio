@@ -17,7 +17,6 @@ import {
   gidaVolumes,
 } from "./data/gida"
 
-// ── Personalise everything here ────────────────────────────────────────────
 const NAME = "MOMO"
 const EMAIL = "Morinsolaho@gmail.com"
 const LOCATION = "Lagos · London"
@@ -30,7 +29,6 @@ const BIO = [
 const SERVICES = ["Creative Direction", "Styling"]
 const ABOUT_IMAGE = "/images/momo-about.png"
 const LOGO = "/images/momo-logo-line.png"
-// ───────────────────────────────────────────────────────────────────────────
 
 type PageId = "home" | "work" | "about" | "gida" | "consultancy" | "contact"
 type WorkMode = "grid" | "list" | "index"
@@ -53,6 +51,7 @@ function pathToPage(pathname: string): PageId {
 
 const imgUrl = (src: string, w: number, h?: number) => {
   const base = src.split("?")[0]
+  if (base.startsWith("/")) return base
   const params = new URLSearchParams({
     w: String(w),
     fit: h ? "crop" : "max",
@@ -756,8 +755,9 @@ function GalleryOverlay({
       >
         <div className="relative flex-1 min-h-0 px-3 sm:px-6 md:px-8 isolate">
           <FadeImg
-            src={imgUrl(src, 1800)}
+            src={src}
             alt={`${project.title} ${index + 1}`}
+            loading="eager"
             className="w-full h-full object-contain"
           />
           <button

@@ -1,18 +1,3 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// PORTFOLIO DATA — edit this file to update your work
-//
-// HOW TO ADD A NEW PROJECT:
-//   1. Copy one of the objects below and paste it into the `projects` array.
-//   2. Give it a unique `id` (no spaces — used internally by React).
-//   3. Set `coverImage` to the URL of your cover photo.
-//   4. Add all gallery image URLs to the `images` array (order matters).
-//   5. Fill in `title`, `category`, `year`. `client` and `description` are optional.
-//
-// HOW TO REORDER PROJECTS ON THE GRID:
-//   - Move the object up or down in the array — order in the array = order on screen.
-//
-// ─────────────────────────────────────────────────────────────────────────────
-
 export interface Project {
   id: string
   title: string
