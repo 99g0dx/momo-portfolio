@@ -69,6 +69,29 @@ function projectCredit(p: Project) {
   return [p.description, p.category].filter(Boolean).join(" · ")
 }
 
+function sampleSideLuma(img: HTMLImageElement, side: "left" | "right") {
+  const canvas = document.createElement("canvas")
+  const max = 72
+  const scale = Math.min(max / img.naturalWidth, max / img.naturalHeight, 1)
+  const w = Math.max(1, Math.round(img.naturalWidth * scale))
+  const h = Math.max(1, Math.round(img.naturalHeight * scale))
+  canvas.width = w
+  canvas.height = h
+  const ctx = canvas.getContext("2d")
+  if (!ctx) return 160
+  ctx.drawImage(img, 0, 0, w, h)
+  const sw = Math.max(1, Math.floor(w * 0.2))
+  const sx = side === "left" ? 0 : w - sw
+  const { data } = ctx.getImageData(sx, 0, sw, h)
+  let sum = 0
+  let n = 0
+  for (let i = 0; i < data.length; i += 20) {
+    sum += 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]
+    n++
+  }
+  return n ? sum / n : 160
+}
+
 function FadeImg({
   src,
   alt,
@@ -313,7 +336,7 @@ function Nav() {
               <img
                 src={LOGO}
                 alt={NAME}
-                className={`h-14 sm:h-16 md:h-[4.5rem] w-auto object-contain ${isAbout ? "invert" : ""}`}
+                className={`h-7 sm:h-8 md:h-6 lg:h-7 w-auto object-contain ${isAbout ? "invert" : ""}`}
               />
             </Link>
           ) : null}
@@ -344,7 +367,6 @@ function Nav() {
             <span className={`menu-toggle__line ${menuOpen ? "is-open" : ""}`} />
           </button>
         </div>
-        <div className={`h-px ${isAbout ? "bg-paper/15" : "bg-ink/10"}`} />
       </header>
 
       {menuOpen ? (
@@ -392,7 +414,7 @@ function WorkGrid({ filtered, onOpen }: { filtered: Project[]; onOpen: (p: Proje
           className="group text-left w-full animate-fade-up"
           style={{ animationDelay: `${Math.min(i, 8) * 40}ms` }}
         >
-          <div className="overflow-hidden bg-ink/8 mb-2 sm:mb-3 w-full aspect-[3/4]">
+          <div className="overflow-hidden bg-ink/8 mb-2 sm:mb-2.5 w-full aspect-[3/4]">
             <FadeImg
               src={imgUrl(p.coverImage, 600)}
               srcSet={`${imgUrl(p.coverImage, 400)} 400w, ${imgUrl(p.coverImage, 700)} 700w, ${imgUrl(p.coverImage, 1000)} 1000w`}
@@ -402,16 +424,14 @@ function WorkGrid({ filtered, onOpen }: { filtered: Project[]; onOpen: (p: Proje
               loading={i < 4 ? "eager" : "lazy"}
             />
           </div>
-          <div className="flex items-baseline justify-between gap-2">
-            <p className="font-display text-[13px] sm:text-[18px] tracking-[-0.015em] text-ink leading-snug min-w-0 break-words">
-              {p.title}
-            </p>
-            <p className="font-sans text-[9px] sm:text-[11px] text-ink-muted shrink-0 font-normal">{p.year}</p>
-          </div>
-          <p className="font-sans text-[7.5px] sm:text-[10.5px] text-ink-muted mt-1 tracking-[0.06em] sm:tracking-[0.12em] uppercase font-medium">
-            {projectCredit(p)}
+          <p className="font-display text-[11px] sm:text-[13px] tracking-[-0.02em] text-ink leading-snug min-w-0 break-words uppercase font-semibold">
+            {p.title}
           </p>
-          <div className="mt-2 sm:mt-3 h-px bg-ink/10" />
+          <p className="font-sans text-[8px] sm:text-[9px] text-ink-muted mt-1 tracking-[0.08em] uppercase font-medium">
+            {projectCredit(p)}
+            <span className="mx-1.5 opacity-50">·</span>
+            {p.year}
+          </p>
         </button>
       ))}
     </div>
@@ -444,15 +464,15 @@ function WorkList({ filtered, onOpen }: { filtered: Project[]; onOpen: (p: Proje
                 opacity: active ? 0.13 : 0,
               }}
             />
-            <div className="relative z-10 flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4 py-2.5 sm:py-5 border-b border-ink/10 min-h-0 sm:min-h-14">
-              <p className="font-display text-[15px] sm:text-[21px] tracking-[-0.02em] text-ink flex-1 leading-[1.15] min-w-0 break-words">
+            <div className="relative z-10 flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-6 py-2.5 sm:py-3 border-b border-ink/10 min-h-0">
+              <p className="font-display text-[12px] sm:text-[13px] tracking-[-0.02em] text-ink flex-1 leading-snug min-w-0 break-words uppercase font-semibold">
                 {p.title}
               </p>
               <div className="flex items-center gap-2 sm:gap-4">
-                <p className="font-sans text-[8px] sm:text-[10.5px] tracking-[0.08em] sm:tracking-[0.12em] uppercase text-ink-muted min-w-0 font-medium">
+                <p className="font-sans text-[8px] sm:text-[9px] tracking-[0.08em] uppercase text-ink-muted min-w-0 font-medium">
                   {projectCredit(p)}
                 </p>
-                <p className="font-sans text-[9px] sm:text-[11px] text-ink-muted shrink-0 sm:w-10 sm:text-right">
+                <p className="font-sans text-[8px] sm:text-[9px] tracking-[0.08em] text-ink-muted shrink-0 sm:w-10 sm:text-right">
                   {p.year}
                 </p>
                 <span
@@ -480,11 +500,11 @@ function WorkIndex({
   onLightbox: (src: string, all: string[]) => void
 }) {
   return (
-    <div className="space-y-6 sm:space-y-14">
+    <div className="space-y-6 md:space-y-8">
       {filtered.map((p) => (
         <div key={p.id}>
-          <div className="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4 mb-2 sm:mb-4">
-            <h2 className="font-display text-[16px] sm:text-[26px] tracking-[-0.02em] text-ink leading-snug min-w-0 break-words">
+          <div className="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between md:justify-start sm:gap-4 md:gap-x-6 mb-2 sm:mb-4 md:mb-2">
+            <h2 className="font-display text-[16px] sm:text-[26px] md:text-[16px] tracking-[-0.02em] text-ink leading-snug min-w-0 break-words uppercase font-semibold">
               {p.title}
             </h2>
             <p className="font-sans text-[7.5px] sm:text-[10.5px] tracking-[0.06em] sm:tracking-[0.12em] uppercase text-ink-muted shrink-0 font-medium">
@@ -549,7 +569,7 @@ function WorkSection({
         />
         <div className="h-px bg-ink/10" />
       </div>
-      <div className="px-3 sm:px-6 md:px-8 pt-4 sm:pt-8">
+      <div className={`px-3 sm:px-6 md:px-8 pt-4 ${mode === "index" ? "md:pt-5" : "sm:pt-8"}`}>
         <div key={`${mode}-${activeCategory}`} className="animate-fade-up">
           {mode === "grid" && <WorkGrid filtered={filtered} onOpen={onOpen} />}
           {mode === "list" && <WorkList filtered={filtered} onOpen={onOpen} />}
@@ -564,12 +584,53 @@ function WorkSection({
 function GalleryOverlay({
   project,
   onClose,
-  onLightbox,
+  onPrevCollection,
+  onNextCollection,
 }: {
   project: Project
   onClose: () => void
-  onLightbox: (src: string, all: string[]) => void
+  onPrevCollection: () => void
+  onNextCollection: () => void
 }) {
+  const [index, setIndex] = useState(0)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [edgeInk, setEdgeInk] = useState({ left: true, right: true })
+  const touchStartX = useRef<number | null>(null)
+  const touchDelta = useRef(0)
+  const total = project.images.length
+  const src = project.images[index] ?? project.images[0]
+
+  const goPrev = useCallback(() => {
+    setIndex((i) => (i - 1 + total) % total)
+  }, [total])
+
+  const goNext = useCallback(() => {
+    setIndex((i) => (i + 1) % total)
+  }, [total])
+
+  useEffect(() => {
+    setIndex(0)
+  }, [project.id])
+
+  useEffect(() => {
+    let cancelled = false
+    const probe = new Image()
+    probe.onload = () => {
+      if (cancelled) return
+      setEdgeInk({
+        left: sampleSideLuma(probe, "left") >= 145,
+        right: sampleSideLuma(probe, "right") >= 145,
+      })
+    }
+    probe.onerror = () => {
+      if (!cancelled) setEdgeInk({ left: true, right: true })
+    }
+    probe.src = imgUrl(src, 480)
+    return () => {
+      cancelled = true
+    }
+  }, [src])
+
   useEffect(() => {
     const prev = document.body.style.overflow
     document.body.style.overflow = "hidden"
@@ -578,9 +639,42 @@ function GalleryOverlay({
     }
   }, [])
 
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") goPrev()
+      if (e.key === "ArrowRight") goNext()
+      if (e.key === "Escape") {
+        if (menuOpen) setMenuOpen(false)
+        else onClose()
+        return
+      }
+    }
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  }, [goPrev, goNext, onClose, menuOpen])
+
+  const onTouchStart = (e: TouchEvent) => {
+    touchStartX.current = e.touches[0]?.clientX ?? null
+    touchDelta.current = 0
+  }
+
+  const onTouchMove = (e: TouchEvent) => {
+    if (touchStartX.current == null) return
+    touchDelta.current = (e.touches[0]?.clientX ?? 0) - touchStartX.current
+  }
+
+  const onTouchEnd = () => {
+    if (Math.abs(touchDelta.current) > 50) {
+      if (touchDelta.current > 0) goPrev()
+      else goNext()
+    }
+    touchStartX.current = null
+    touchDelta.current = 0
+  }
+
   return (
-    <div className="fixed inset-0 z-[70] bg-paper animate-fade-in overflow-y-auto pt-[env(safe-area-inset-top)]">
-      <div className="sticky top-0 z-10 bg-paper/96 backdrop-blur-md border-b border-ink/10 px-3 sm:px-6 md:px-8 py-2.5 sm:py-3 relative flex items-center justify-between gap-3">
+    <div className="fixed inset-0 z-[70] h-[100dvh] overflow-hidden bg-paper animate-fade-in flex flex-col pt-[env(safe-area-inset-top)]">
+      <div className="relative flex items-center justify-between px-3 sm:px-6 md:px-8 py-2.5 sm:py-3 shrink-0 bg-paper z-10">
         <button
           type="button"
           onClick={onClose}
@@ -590,57 +684,171 @@ function GalleryOverlay({
         </button>
         <Link
           to="/"
-          onClick={onClose}
           aria-label={NAME}
           className="absolute left-1/2 -translate-x-1/2 z-10 shrink-0 transition-opacity hover:opacity-55"
         >
           <img
             src={LOGO}
             alt={NAME}
-            className="h-14 sm:h-16 md:h-[4.5rem] w-auto object-contain"
+            className="h-7 sm:h-8 md:h-6 lg:h-7 w-auto object-contain"
           />
         </Link>
-        <span className="w-12 sm:w-16 shrink-0" />
+        <nav className="hidden md:flex items-center gap-x-2 lg:gap-x-2.5 z-10" aria-label="Primary">
+          {NAV_LINKS.map((item) => (
+            <Link
+              key={item.id}
+              to={item.path}
+              className={`font-sans text-[8px] tracking-[0.1em] uppercase whitespace-nowrap transition-opacity font-medium ${
+                item.id === "work" ? "text-ink" : "text-ink/40 hover:text-ink"
+              }`}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+        <button
+          type="button"
+          className="menu-toggle grid md:hidden z-10"
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={menuOpen}
+          aria-controls="collection-nav-menu"
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          <span className={`menu-toggle__line ${menuOpen ? "is-open" : ""}`} />
+          <span className={`menu-toggle__line ${menuOpen ? "is-open" : ""}`} />
+          <span className={`menu-toggle__line ${menuOpen ? "is-open" : ""}`} />
+        </button>
       </div>
 
-      <div className="px-3 sm:px-6 md:px-8 py-4 sm:py-8 pb-20">
-        <div className="mb-4 sm:mb-6 flex flex-col gap-1.5 sm:flex-row sm:items-end sm:justify-between sm:gap-2">
-          <div>
-            <h1 className="font-display text-[20px] sm:text-[40px] tracking-[-0.025em] text-ink leading-[1.05]">
-              {project.title}
-            </h1>
-          </div>
-          <p className="font-sans text-[8px] sm:text-[10.5px] text-ink-muted tracking-[0.08em] sm:tracking-[0.12em] uppercase sm:text-right font-medium">
-            {projectCredit(project)}
-            <span className="mx-1.5 opacity-40">·</span>
-            {project.year}
-            {project.client && (
-              <>
-                <br />
-                <span className="normal-case tracking-normal font-normal text-ink/55">
-                  {project.client}
-                </span>
-              </>
-            )}
-          </p>
+      {menuOpen ? (
+        <div className="fixed inset-0 z-20 md:hidden">
+          <button
+            type="button"
+            aria-label="Close menu"
+            className="absolute inset-0 bg-transparent"
+            onClick={() => setMenuOpen(false)}
+          />
+          <nav
+            id="collection-nav-menu"
+            className="absolute top-[calc(env(safe-area-inset-top)+2.75rem)] right-4 w-[min(12.5rem,calc(100vw-2rem))] border border-ink/15 bg-paper shadow-[0_8px_24px_rgba(12,12,10,0.1)] animate-fade-up"
+            aria-label="Primary"
+          >
+            {NAV_LINKS.map((item, i) => (
+              <Link
+                key={item.id}
+                to={item.path}
+                className={`block w-full text-left font-sans text-[11px] tracking-[0.16em] uppercase px-3 py-2 border-b border-ink/10 transition-opacity font-medium ${
+                  item.id === "work" ? "text-ink" : "text-ink/40 hover:text-ink"
+                } ${i === NAV_LINKS.length - 1 ? "border-b-0" : ""}`}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
         </div>
+      ) : null}
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-0.5">
-          {project.images.map((src, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={() => onLightbox(src, project.images)}
-              className="group aspect-square overflow-hidden bg-ink/8"
+      <div
+        className="relative flex-1 min-h-0 flex flex-col"
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
+        <div className="relative flex-1 min-h-0 px-3 sm:px-6 md:px-8 isolate">
+          <FadeImg
+            src={imgUrl(src, 1800)}
+            alt={`${project.title} ${index + 1}`}
+            className="w-full h-full object-contain"
+          />
+          <button
+            type="button"
+            aria-label="Previous image"
+            className="absolute inset-y-0 left-0 w-[40%] cursor-pointer bg-transparent flex items-center justify-start pl-3 sm:pl-5 md:pl-8 group"
+            onClick={goPrev}
+          >
+            <span className={`flex h-16 w-8 items-center justify-center ${edgeInk.left ? "text-ink" : "text-paper"} md:text-ink`}>
+              <svg
+                viewBox="0 0 16 40"
+                className="h-10 w-4 md:h-12 md:w-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.15"
+                aria-hidden="true"
+              >
+                <path d="M12 2L3 20l9 18" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+          </button>
+          <button
+            type="button"
+            aria-label="Next image"
+            className="absolute inset-y-0 right-0 w-[40%] cursor-pointer bg-transparent flex items-center justify-end pr-3 sm:pr-5 md:pr-8 group"
+            onClick={goNext}
+          >
+            <span className={`flex h-16 w-8 items-center justify-center ${edgeInk.right ? "text-ink" : "text-paper"} md:text-ink`}>
+              <svg
+                viewBox="0 0 16 40"
+                className="h-10 w-4 md:h-12 md:w-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.15"
+                aria-hidden="true"
+              >
+                <path d="M4 2l9 18-9 18" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+          </button>
+        </div>
+        <div className="shrink-0 px-3 sm:px-6 md:px-8 py-2 sm:py-3 flex items-center justify-between gap-3 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+          <button
+            type="button"
+            aria-label="Previous collection"
+            className="shrink-0 text-ink/40 hover:text-ink transition-colors flex items-center justify-center p-1"
+            onClick={onPrevCollection}
+          >
+            <svg
+              viewBox="0 0 10 10"
+              className="h-2.5 w-2.5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="0.9"
+              aria-hidden="true"
             >
-              <FadeImg
-                src={imgUrl(src, 500, 500)}
-                alt={`${project.title} ${i + 1}`}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.06]"
-                loading={i < 4 ? "eager" : "lazy"}
-              />
-            </button>
-          ))}
+              <path d="M7 1L3 5l4 4" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          <div className="min-w-0 flex-1 flex items-end justify-between gap-4">
+            <div className="min-w-0">
+              <h1 className="font-display text-[14px] sm:text-[18px] tracking-[-0.02em] text-ink leading-snug uppercase font-semibold">
+                {project.title}
+              </h1>
+              <p className="font-sans text-[8px] sm:text-[9px] text-ink-muted tracking-[0.08em] uppercase font-medium mt-1">
+                {projectCredit(project)}
+                <span className="mx-1.5 opacity-40">·</span>
+                {project.year}
+              </p>
+            </div>
+            <p className="font-sans text-[8px] sm:text-[9px] text-ink-muted tabular-nums shrink-0">
+              {index + 1} / {total}
+            </p>
+          </div>
+          <button
+            type="button"
+            aria-label="Next collection"
+            className="shrink-0 text-ink/40 hover:text-ink transition-colors flex items-center justify-center p-1"
+            onClick={onNextCollection}
+          >
+            <svg
+              viewBox="0 0 10 10"
+              className="h-2.5 w-2.5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="0.9"
+              aria-hidden="true"
+            >
+              <path d="M3 1l4 4-4 4" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
         </div>
       </div>
     </div>
@@ -652,18 +860,18 @@ function LandingView() {
   return (
     <Section
       id="home"
-      className="h-[100dvh] flex items-center justify-center bg-paper px-5 sm:px-8 lg:px-12"
+      className="flex-1 flex items-center justify-center bg-paper px-5 sm:px-8 lg:px-12 min-h-0"
     >
       <div className="max-w-3xl mx-auto text-center animate-fade-up w-full">
         <img
           src={LOGO}
           alt=""
-          className="mx-auto h-[clamp(3.25rem,16vw,7.5rem)] w-auto object-contain"
+          className="mx-auto h-[clamp(2rem,11vw,4.75rem)] md:h-[clamp(3.25rem,7vw,6.5rem)] w-auto max-w-[min(15rem,80vw)] md:max-w-[min(24rem,48vw)] object-contain"
         />
-        <h1 className="-mt-2 sm:-mt-3 font-display text-[clamp(1.35rem,5.5vw,2.85rem)] tracking-[-0.03em] font-light text-ink leading-[1.1] uppercase break-words">
+        <h1 className="mt-4 sm:mt-5 font-display text-[clamp(1.85rem,8vw,3.75rem)] tracking-[-0.02em] font-semibold text-ink leading-[1.1] uppercase break-words">
           Momo Hassan-Odukale
         </h1>
-        <p className="mt-4 sm:mt-6 font-sans text-[14px] sm:text-[16px] leading-[1.7] text-ink/65 font-light max-w-md mx-auto px-1">
+        <p className="mt-3 font-sans text-[10px] sm:text-[12px] leading-[1.5] text-ink/50 font-light max-w-md mx-auto px-1">
           Momo Hassan-Odukale is a stylist, creative director, and consultant.
         </p>
       </div>
@@ -676,10 +884,10 @@ function AboutView() {
   return (
     <Section
       id="about"
-      className="bg-ink min-h-[100dvh] pt-[var(--header-h)] md:h-[100dvh] md:min-h-0 md:pt-0 md:overflow-hidden"
+      className="bg-ink flex-1 min-h-0 overflow-hidden flex flex-col pt-[var(--header-h)] md:pt-0"
     >
-      <div className="flex flex-col md:flex-row md:h-full">
-        <div className="order-1 md:order-2 w-full md:w-[42%] md:shrink-0 aspect-[4/5] md:aspect-auto md:h-full md:min-h-0 overflow-hidden">
+      <div className="flex-1 min-h-0 flex flex-col md:flex-row">
+        <div className="order-1 md:order-2 w-full flex-1 min-h-0 md:flex-none md:w-1/2 md:h-full md:shrink-0 overflow-hidden">
           <FadeImg
             src={ABOUT_IMAGE}
             alt={NAME}
@@ -688,21 +896,21 @@ function AboutView() {
           />
         </div>
 
-        <div className="order-2 md:order-1 flex-1 flex flex-col justify-end px-5 sm:px-8 md:px-10 py-6 sm:py-12 md:h-full md:min-h-0 md:py-8 md:pt-[calc(var(--header-h)+0.75rem)]">
-          <div className="max-w-md">
+        <div className="order-2 md:order-1 shrink-0 md:flex-1 md:w-1/2 md:h-full md:min-h-0 flex flex-col justify-end md:justify-center md:overflow-hidden px-5 sm:px-8 md:px-14 lg:px-16 py-4 sm:py-6 md:py-0 md:pt-[var(--header-h)]">
+          <div className="max-w-md md:max-w-sm">
             {BIO.map((para, i) => (
               <p
                 key={i}
-                className={`font-sans text-[13px] sm:text-[16px] md:text-[14px] lg:text-[15px] leading-[1.7] md:leading-[1.65] text-paper/78 font-light ${i > 0 ? "mt-5" : ""}`}
+                className={`font-sans text-[13px] sm:text-[16px] md:text-[13px] leading-[1.7] text-paper/78 font-light ${i > 0 ? "mt-5" : ""}`}
               >
                 {para}
               </p>
             ))}
-            <div className="mt-6 pt-5 sm:mt-8 sm:pt-7 md:mt-6 md:pt-5 border-t border-paper/10">
+            <div className="mt-6 sm:mt-8 md:mt-10 md:pt-0 pt-5 sm:pt-7 border-t border-paper/10 md:border-t-0">
               <p className="font-sans text-[10px] tracking-[0.16em] uppercase text-paper/40 mb-2 font-medium">
                 Services
               </p>
-              <p className="font-sans text-[12px] sm:text-[14px] text-paper/65 leading-relaxed font-light">
+              <p className="font-sans text-[12px] sm:text-[14px] md:text-[12px] text-paper/65 md:text-paper/50 leading-relaxed font-light">
                 {SERVICES.join(" · ")}
               </p>
             </div>
@@ -730,152 +938,152 @@ function GidaView() {
   }
 
   return (
-    <Section id="gida" className="bg-paper py-16 sm:py-24 pt-[calc(var(--header-h)+2.5rem)]">
-      <div className="px-5 sm:px-8 lg:px-12">
-        <div className="max-w-2xl mx-auto animate-fade-up">
-          <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-ink-muted mb-5 font-medium">
-            GIDA
-          </p>
-          <p className="font-sans text-[12px] sm:text-[13px] tracking-[0.04em] text-ink/55 mb-4 font-light">
-            <span className="font-display text-[15px] sm:text-[16px] tracking-[-0.02em] text-ink/80 not-italic">
-              {gidaAbout.pronunciation}
-            </span>
-            <span className="mx-2.5 text-ink/25">·</span>
-            {gidaAbout.meaning}
-          </p>
-          <h1 className="font-display text-[clamp(2.6rem,8vw,4.25rem)] tracking-[-0.04em] font-light text-ink leading-[0.95] mb-8">
-            GIDA
-          </h1>
-          <div className="space-y-5 mb-6">
-            {gidaAbout.paragraphs.map((paragraph) => (
-              <p
-                key={paragraph.slice(0, 48)}
-                className="font-sans text-[15px] sm:text-[16px] leading-[1.8] text-ink/78 font-light"
-              >
-                {paragraph}
-              </p>
-            ))}
-          </div>
-          {gidaAbout.founder ? (
-            <p className="font-sans text-[13px] sm:text-[14px] leading-relaxed text-ink/50 font-light">
-              {gidaAbout.founder}
+    <Section
+      id="gida"
+      className="bg-paper flex-1 min-h-0 md:overflow-hidden md:flex md:flex-col pt-[calc(var(--header-h)+1.25rem)] pb-0"
+    >
+      <div className="px-5 sm:px-8 lg:px-12 md:flex-1 md:min-h-0 md:flex md:flex-col md:justify-center">
+        <div className="max-w-2xl md:max-w-5xl mx-auto w-full animate-fade-up md:grid md:grid-cols-2 md:gap-x-12 md:gap-y-0 md:items-start">
+          <div>
+            <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-ink-muted mb-2 sm:mb-3 md:mb-2 font-medium">
+              GIDA
             </p>
-          ) : null}
-        </div>
-      </div>
+            <p className="font-sans text-[12px] tracking-[0.04em] text-ink/55 mb-2 sm:mb-3 md:mb-2 font-normal">
+              <span className="font-display text-[14px] sm:text-[15px] tracking-[-0.02em] text-ink/80 not-italic font-semibold">
+                {gidaAbout.pronunciation}
+              </span>
+              <span className="mx-2.5 text-ink/25">·</span>
+              {gidaAbout.meaning}
+            </p>
+            <h1 className="font-display font-semibold text-[clamp(1.85rem,5vw,2.75rem)] md:text-[2.15rem] tracking-[-0.02em] text-ink leading-[0.95] mb-3 sm:mb-4 md:mb-3">
+              GIDA
+            </h1>
+            <div className="space-y-3 md:space-y-2.5 mb-4 md:mb-0">
+              {gidaAbout.paragraphs.map((paragraph) => (
+                <p
+                  key={paragraph.slice(0, 48)}
+                  className="font-sans text-[12px] sm:text-[13px] leading-[1.6] text-ink/78 font-normal"
+                >
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+            {gidaAbout.founder ? (
+              <p className="font-sans text-[12px] sm:text-[13px] leading-[1.6] text-ink/50 font-normal mb-4 md:mb-0 md:mt-2.5">
+                {gidaAbout.founder}
+              </p>
+            ) : null}
+          </div>
 
-      <div className="px-5 sm:px-8 lg:px-12 mt-16 sm:mt-20">
-        <div className="max-w-2xl mx-auto animate-fade-up">
-          <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-ink-muted mb-8 font-medium">
-            Journal
-          </p>
-          <ol className="border-t border-ink/15">
-            {gidaVolumes.map((volume) => (
-              <li
-                key={volume.id}
-                className="grid grid-cols-[4.75rem_1fr_auto] sm:grid-cols-[5.5rem_1fr_auto] gap-x-4 sm:gap-x-5 py-4 border-b border-ink/10 items-start"
-              >
-                <div className="aspect-[3/4] overflow-hidden bg-ink/8">
-                  <FadeImg
-                    src={volume.coverImage}
-                    alt={volume.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="min-w-0 pt-0.5">
-                  <p className="font-sans text-[11px] text-ink-muted tabular-nums tracking-[0.06em] font-medium mb-1.5">
-                    {volume.label}
-                  </p>
+          <div className="mt-4 md:mt-0">
+            <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-ink-muted mb-3 md:mb-2 font-medium">
+              Journal
+            </p>
+            <ol className="border-t border-ink/15 mb-5 md:mb-4">
+              {gidaVolumes.map((volume) => (
+                <li
+                  key={volume.id}
+                  className="grid grid-cols-[3.25rem_1fr_auto] sm:grid-cols-[3.75rem_1fr_auto] md:grid-cols-[3rem_1fr_auto] gap-x-3 sm:gap-x-4 py-2 md:py-1.5 border-b border-ink/10 items-start"
+                >
+                  <div className="aspect-[3/4] overflow-hidden bg-ink/8">
+                    <FadeImg
+                      src={volume.coverImage}
+                      alt={volume.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="min-w-0 pt-0.5">
+                    <p className="font-sans text-[10px] text-ink-muted tabular-nums tracking-[0.06em] font-medium mb-0.5">
+                      {volume.label}
+                    </p>
+                    {volume.href ? (
+                      <a
+                        href={volume.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-display font-semibold text-[15px] sm:text-[16px] md:text-[15px] tracking-[-0.02em] text-ink leading-snug underline underline-offset-4 decoration-ink/20 hover:decoration-ink"
+                      >
+                        {volume.title}
+                      </a>
+                    ) : (
+                      <p className="font-display font-semibold text-[15px] sm:text-[16px] md:text-[15px] tracking-[-0.02em] text-ink leading-snug">
+                        {volume.title}
+                      </p>
+                    )}
+                    {volume.year ? (
+                      <p className="font-sans text-[10px] text-ink/45 mt-0.5 tracking-[0.04em]">
+                        {volume.year}
+                      </p>
+                    ) : null}
+                  </div>
                   {volume.href ? (
                     <a
                       href={volume.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-display text-[18px] sm:text-[20px] tracking-[-0.02em] text-ink leading-snug underline underline-offset-4 decoration-ink/20 hover:decoration-ink"
+                      className="font-sans text-[9px] tracking-[0.12em] uppercase text-ink font-medium pt-1 underline underline-offset-4 decoration-ink/25 hover:decoration-ink"
                     >
-                      {volume.title}
+                      Purchase
                     </a>
                   ) : (
-                    <p className="font-display text-[18px] sm:text-[20px] tracking-[-0.02em] text-ink leading-snug">
-                      {volume.title}
-                    </p>
+                    <span className="font-sans text-[9px] tracking-[0.12em] uppercase text-ink-muted font-medium pt-1">
+                      {volume.status}
+                    </span>
                   )}
-                  {volume.year ? (
-                    <p className="font-sans text-[11px] text-ink/45 mt-1 tracking-[0.04em]">
-                      {volume.year}
-                    </p>
-                  ) : null}
-                </div>
-                {volume.href ? (
-                  <a
-                    href={volume.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-sans text-[10px] tracking-[0.12em] uppercase text-ink font-medium pt-1 underline underline-offset-4 decoration-ink/25 hover:decoration-ink"
-                  >
-                    Purchase
-                  </a>
-                ) : (
-                  <span className="font-sans text-[10px] tracking-[0.12em] uppercase text-ink-muted font-medium pt-1">
-                    {volume.status}
+                </li>
+              ))}
+            </ol>
+
+            <p className="font-sans text-[12px] sm:text-[13px] leading-[1.6] text-ink/78 font-normal mb-4 md:mb-3">
+              Subscribe to stay connected with the pulse of African art, design, and culture.
+            </p>
+
+            <form onSubmit={onSubscribe} className="max-w-md space-y-3 md:space-y-1.5 mb-4 md:mb-2">
+              <div className="grid md:grid-cols-2 md:gap-x-6 gap-y-3 md:gap-y-0">
+                <label className="block">
+                  <span className="font-sans text-[9px] tracking-[0.16em] uppercase text-ink-muted font-medium">
+                    Email Address *
                   </span>
-                )}
-              </li>
-            ))}
-          </ol>
-        </div>
-      </div>
+                  <input
+                    name="email"
+                    type="email"
+                    required
+                    autoComplete="email"
+                    className="mt-1 w-full min-h-9 md:min-h-8 bg-transparent border-b border-ink/20 py-1.5 md:py-1 font-sans text-[13px] text-ink outline-none focus:border-ink transition-colors"
+                  />
+                </label>
+                <label className="block">
+                  <span className="font-sans text-[9px] tracking-[0.16em] uppercase text-ink-muted font-medium">
+                    First Name *
+                  </span>
+                  <input
+                    name="firstName"
+                    required
+                    autoComplete="given-name"
+                    className="mt-1 w-full min-h-9 md:min-h-8 bg-transparent border-b border-ink/20 py-1.5 md:py-1 font-sans text-[13px] text-ink outline-none focus:border-ink transition-colors"
+                  />
+                </label>
+              </div>
+              <button
+                type="submit"
+                className="md:mt-1 inline-flex items-center justify-center px-3.5 py-1.5 border border-ink font-sans text-[9px] tracking-[0.2em] uppercase text-ink hover:bg-ink hover:text-paper transition-colors duration-200"
+              >
+                {subscribed ? "Opening subscribe…" : "Subscribe →"}
+              </button>
+            </form>
 
-      <div className="px-5 sm:px-8 lg:px-12 mt-16 sm:mt-24">
-        <div className="max-w-2xl mx-auto animate-fade-up">
-          <p className="font-sans text-[15px] sm:text-[16px] leading-[1.8] text-ink/78 font-light mb-10">
-            Subscribe to stay connected with the pulse of African art, design, and culture.
-          </p>
-
-          <form onSubmit={onSubscribe} className="max-w-md space-y-5 mb-8">
-            <label className="block">
-              <span className="font-sans text-[10px] tracking-[0.16em] uppercase text-ink-muted font-medium">
-                Email Address *
-              </span>
-              <input
-                name="email"
-                type="email"
-                required
-                autoComplete="email"
-                className="mt-2 w-full min-h-11 bg-transparent border-b border-ink/20 py-2.5 font-sans text-[14px] text-ink outline-none focus:border-ink transition-colors"
-              />
-            </label>
-            <label className="block">
-              <span className="font-sans text-[10px] tracking-[0.16em] uppercase text-ink-muted font-medium">
-                First Name *
-              </span>
-              <input
-                name="firstName"
-                required
-                autoComplete="given-name"
-                className="mt-2 w-full min-h-11 bg-transparent border-b border-ink/20 py-2.5 font-sans text-[14px] text-ink outline-none focus:border-ink transition-colors"
-              />
-            </label>
-            <button
-              type="submit"
-              className="font-sans text-[11px] tracking-[0.2em] uppercase text-ink hover:opacity-45 transition-opacity"
+            <a
+              href={gidaInstagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-sans text-[12px] text-ink underline underline-offset-4 decoration-ink/30 hover:decoration-ink"
             >
-              {subscribed ? "Opening subscribe…" : "Subscribe →"}
-            </button>
-          </form>
-
-          <a
-            href={gidaInstagram}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-sans text-[12px] text-ink underline underline-offset-4 decoration-ink/30 hover:decoration-ink"
-          >
-            @gidajournal
-          </a>
+              @gidajournal
+            </a>
+          </div>
         </div>
       </div>
 
-      <SiteFooter />
     </Section>
   )
 }
@@ -909,46 +1117,48 @@ function ConsultancyView() {
   return (
     <Section
       id="consultancy"
-      className="bg-paper min-h-[100dvh] px-5 sm:px-8 lg:px-12 pt-[calc(var(--header-h)+1rem)] sm:pt-[calc(var(--header-h)+2.5rem)] pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:pb-24"
+      className="flex flex-col flex-1 min-h-0 bg-paper md:overflow-hidden pt-[calc(var(--header-h)+0.75rem)] pb-4"
     >
-      <div className="max-w-2xl mx-auto">
-        <p className="font-sans text-[9px] sm:text-[10px] tracking-[0.18em] uppercase text-ink-muted mb-2 sm:mb-6 font-medium">
-          Consultancy
-        </p>
-        <h1 className="font-display text-[1.5rem] sm:text-[clamp(1.75rem,5vw,3.4rem)] tracking-[-0.03em] text-ink leading-[1.08] mb-3 sm:mb-5">
-          Consultancy
-        </h1>
-        <p className="font-sans text-[12px] sm:text-[16px] leading-[1.55] sm:leading-[1.75] text-ink/72 mb-6 sm:mb-12 max-w-lg font-light">
-          Momo offers the following services for brands, artists, and cultural institutions:
-        </p>
-        <ul className="border-t border-ink/15">
-          {services.map((service) => (
-            <li
-              key={service.name}
-              className="grid grid-cols-[0.9rem_1fr] sm:grid-cols-[1.25rem_1fr] gap-3 sm:gap-5 py-2.5 sm:py-6 border-b border-ink/10"
-            >
-              <span
-                aria-hidden="true"
-                className="mt-[0.55rem] sm:mt-[0.85rem] h-px w-3 sm:w-4 bg-ink/35"
-              />
-              <div>
-                <h2 className="font-display text-[16px] sm:text-[28px] tracking-[-0.025em] text-ink mb-1 sm:mb-2 leading-snug">
-                  {service.name}
-                </h2>
-                <p className="font-sans text-[12px] sm:text-[15px] leading-5 sm:leading-7 text-ink/68 font-light max-w-md">
-                  {service.description}
-                </p>
-              </div>
-            </li>
-          ))}
-        </ul>
-        <button
-          type="button"
-          onClick={() => navigate("/contact")}
-          className="mt-6 sm:mt-10 font-sans text-[10px] sm:text-[11px] tracking-[0.2em] uppercase border border-ink px-4 py-2 sm:px-5 sm:py-3 text-ink hover:bg-ink hover:text-paper transition-colors"
-        >
-          Get in touch
-        </button>
+      <div className="px-5 sm:px-8 lg:px-12 py-4 sm:py-6 md:py-0 md:flex-1 md:flex md:items-center md:min-h-0 md:overflow-hidden">
+        <div className="max-w-2xl mx-auto w-full">
+          <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-ink-muted mb-2 sm:mb-3 md:mb-2 font-medium">
+            Consultancy
+          </p>
+          <h1 className="font-display font-semibold text-[clamp(1.75rem,5vw,2.6rem)] md:text-[2rem] tracking-[-0.02em] text-ink mb-2 sm:mb-3 leading-[1.05]">
+            Consultancy
+          </h1>
+          <p className="font-sans text-[12px] sm:text-[13px] leading-[1.6] text-ink/70 mb-4 sm:mb-5 md:mb-4 max-w-md font-normal">
+            Momo offers the following services for brands, artists, and cultural institutions:
+          </p>
+          <ul className="border-t border-ink/15">
+            {services.map((service) => (
+              <li
+                key={service.name}
+                className="grid grid-cols-[0.9rem_1fr] sm:grid-cols-[1.25rem_1fr] gap-3 sm:gap-4 py-2 sm:py-2.5 md:py-2 border-b border-ink/10"
+              >
+                <span
+                  aria-hidden="true"
+                  className="mt-[0.55rem] sm:mt-[0.7rem] h-px w-3 sm:w-4 bg-ink/35"
+                />
+                <div>
+                  <h2 className="font-display font-semibold text-[16px] sm:text-[20px] md:text-[17px] tracking-[-0.02em] text-ink mb-0.5 leading-snug">
+                    {service.name}
+                  </h2>
+                  <p className="font-sans text-[12px] sm:text-[13px] leading-[1.6] md:leading-[1.5] text-ink/68 font-normal max-w-md">
+                    {service.description}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <button
+            type="button"
+            onClick={() => navigate("/contact")}
+            className="mt-5 sm:mt-6 md:mt-5 inline-flex items-center justify-center px-3.5 py-1.5 border border-ink font-sans text-[9px] tracking-[0.2em] uppercase text-ink hover:bg-ink hover:text-paper transition-colors duration-200"
+          >
+            Get in touch
+          </button>
+        </div>
       </div>
     </Section>
   )
@@ -973,42 +1183,44 @@ function ContactView() {
   return (
     <Section
       id="contact"
-      className="flex flex-col bg-paper min-h-[100dvh] pt-[calc(var(--header-h)+2.5rem)] pb-[max(1.5rem,env(safe-area-inset-bottom))]"
+      className="flex flex-col flex-1 min-h-0 bg-paper md:overflow-hidden pt-[calc(var(--header-h)+1.25rem)] pb-6"
     >
-      <div className="px-5 sm:px-8 lg:px-12 py-8 sm:py-20">
-        <div className="max-w-xl mx-auto">
-          <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-ink-muted mb-5 font-medium">
+      <div className="px-5 sm:px-8 lg:px-12 py-6 sm:py-8 md:flex-1 md:flex md:items-center">
+        <div className="max-w-xl mx-auto w-full">
+          <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-ink-muted mb-3 sm:mb-4 font-medium">
             Contact
           </p>
-          <h1 className="font-display text-[clamp(1.75rem,8vw,3.5rem)] text-ink mb-4 tracking-[-0.03em] leading-[1.05]">
+          <h1 className="font-display font-semibold text-[clamp(1.75rem,5vw,2.6rem)] tracking-[-0.02em] text-ink mb-3 leading-[1.05]">
             Get in touch
           </h1>
-          <p className="font-sans text-[13px] sm:text-[16px] text-ink/70 leading-[1.75] mb-8 sm:mb-12 max-w-md font-light">
+          <p className="font-sans text-[12px] sm:text-[13px] leading-[1.6] text-ink/70 mb-6 sm:mb-7 max-w-md font-normal">
             For commissions, GIDA, consultancy, or press — send a note or reach out on Instagram.
           </p>
 
-          <form onSubmit={onSubmit} className="space-y-3 sm:space-y-5 mb-6 sm:mb-12">
-            <label className="block">
-              <span className="font-sans text-[9px] sm:text-[10px] tracking-[0.16em] uppercase text-ink-muted font-medium">
-                Name
-              </span>
-              <input
-                name="name"
-                required
-                className="mt-1 sm:mt-2 w-full min-h-9 sm:min-h-11 bg-transparent border-b border-ink/20 py-1.5 sm:py-2.5 font-sans text-[13px] sm:text-[14px] text-ink outline-none focus:border-ink transition-colors"
-              />
-            </label>
-            <label className="block">
-              <span className="font-sans text-[9px] sm:text-[10px] tracking-[0.16em] uppercase text-ink-muted font-medium">
-                Email
-              </span>
-              <input
-                name="email"
-                type="email"
-                required
-                className="mt-1 sm:mt-2 w-full min-h-9 sm:min-h-11 bg-transparent border-b border-ink/20 py-1.5 sm:py-2.5 font-sans text-[13px] sm:text-[14px] text-ink outline-none focus:border-ink transition-colors"
-              />
-            </label>
+          <form onSubmit={onSubmit} className="space-y-3 sm:space-y-4 mb-6 sm:mb-7">
+            <div className="grid sm:grid-cols-2 gap-3 sm:gap-6">
+              <label className="block">
+                <span className="font-sans text-[9px] sm:text-[10px] tracking-[0.16em] uppercase text-ink-muted font-medium">
+                  Name
+                </span>
+                <input
+                  name="name"
+                  required
+                  className="mt-1 w-full min-h-8 bg-transparent border-0 border-b border-ink/10 py-1 font-sans text-[12px] sm:text-[13px] leading-[1.6] font-normal text-ink outline-none focus:border-ink/40 transition-colors"
+                />
+              </label>
+              <label className="block">
+                <span className="font-sans text-[9px] sm:text-[10px] tracking-[0.16em] uppercase text-ink-muted font-medium">
+                  Email
+                </span>
+                <input
+                  name="email"
+                  type="email"
+                  required
+                  className="mt-1 w-full min-h-8 bg-transparent border-0 border-b border-ink/10 py-1 font-sans text-[12px] sm:text-[13px] leading-[1.6] font-normal text-ink outline-none focus:border-ink/40 transition-colors"
+                />
+              </label>
+            </div>
             <label className="block">
               <span className="font-sans text-[9px] sm:text-[10px] tracking-[0.16em] uppercase text-ink-muted font-medium">
                 Message
@@ -1016,26 +1228,26 @@ function ContactView() {
               <textarea
                 name="message"
                 required
-                rows={3}
-                className="mt-1 sm:mt-2 w-full bg-transparent border-b border-ink/20 py-1.5 sm:py-2.5 font-sans text-[13px] sm:text-[14px] text-ink outline-none focus:border-ink transition-colors resize-y min-h-[4rem] sm:min-h-[6rem]"
+                rows={2}
+                className="mt-1 w-full bg-transparent border-0 border-b border-ink/10 py-1 font-sans text-[12px] sm:text-[13px] leading-[1.6] font-normal text-ink outline-none focus:border-ink/40 transition-colors resize-none min-h-[2.75rem]"
               />
             </label>
             <button
               type="submit"
-              className="font-sans text-[10px] sm:text-[11px] tracking-[0.2em] uppercase text-ink hover:opacity-45 transition-opacity"
+              className="mt-1 inline-flex items-center justify-center px-3.5 py-1.5 border border-ink font-sans text-[9px] tracking-[0.2em] uppercase text-ink hover:bg-ink hover:text-paper transition-colors duration-200"
             >
               {sent ? "Opening mail…" : "Send message →"}
             </button>
           </form>
 
-          <div className="border-t border-ink/15 pt-8 space-y-5">
+          <div className="mt-12 sm:mt-16 space-y-3 sm:space-y-4">
             <div>
               <p className="font-sans text-[10px] tracking-[0.16em] uppercase text-ink-muted mb-2 font-medium">
                 Email
               </p>
               <a
                 href={`mailto:${EMAIL}`}
-                className="font-sans text-[13px] text-ink hover:opacity-45 transition-opacity"
+                className="font-sans text-[12px] sm:text-[13px] leading-[1.6] font-normal text-ink hover:opacity-45 transition-opacity"
               >
                 {EMAIL}
               </a>
@@ -1051,7 +1263,7 @@ function ContactView() {
                       href={item.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-sans text-[13px] text-ink hover:opacity-45 transition-opacity"
+                      className="font-sans text-[12px] sm:text-[13px] leading-[1.6] font-normal text-ink hover:opacity-45 transition-opacity"
                     >
                       @{item.handle}
                     </a>
@@ -1067,23 +1279,36 @@ function ContactView() {
 }
 
 function SiteFooter() {
+  const location = useLocation()
+  const onInk = location.pathname === "/about"
+
   return (
-    <div className="border-t border-ink/10 px-5 sm:px-8 lg:px-12 py-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 bg-paper pb-[max(1.25rem,env(safe-area-inset-bottom))]">
-      <p className="font-sans text-[9px] text-ink-muted tracking-wider">
-        © {new Date().getFullYear()} {NAME} · ALL RIGHTS RESERVED
-      </p>
-      <div className="flex flex-wrap gap-x-4 gap-y-2 min-w-0">
+    <div
+      className={`px-5 sm:px-8 lg:px-12 py-3 sm:py-3.5 flex flex-col gap-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] shrink-0 ${
+        onInk ? "bg-ink" : "bg-paper"
+      }`}
+    >
+      <div className="flex items-baseline justify-between gap-4">
+        <p className={`font-sans text-[9px] tracking-wider ${onInk ? "text-paper/45" : "text-ink-muted"}`}>
+          © {new Date().getFullYear()} {NAME} · ALL RIGHTS RESERVED
+        </p>
+        <p className={`font-sans text-[11px] tracking-wider shrink-0 ${onInk ? "text-paper/45" : "text-ink-muted"}`}>
+          {LOCATION}
+        </p>
+      </div>
+      <div className="flex flex-wrap gap-x-4 gap-y-1 min-w-0">
         {PAGES.map((item) => (
           <Link
             key={item.id}
             to={item.path}
-            className="font-sans text-[9px] text-ink-muted tracking-wider hover:text-ink transition-colors"
+            className={`font-sans text-[9px] tracking-wider transition-colors ${
+              onInk ? "text-paper/45 hover:text-paper" : "text-ink-muted hover:text-ink"
+            }`}
           >
             {item.label}
           </Link>
         ))}
       </div>
-      <p className="font-sans text-[11px] text-ink-muted tracking-wider">{LOCATION}</p>
     </div>
   )
 }
@@ -1225,14 +1450,36 @@ function Lightbox({
 // ─── App ──────────────────────────────────────────────────────────────────────
 export default function App() {
   const location = useLocation()
+  const navigate = useNavigate()
   const [workMode, setWorkMode] = useState<WorkMode>("grid")
   const [activeCategory, setActiveCategory] = useState("All")
-  const [activeProject, setActiveProject] = useState<Project | null>(null)
   const [lightbox, setLightbox] = useState<{ images: string[]; index: number } | null>(null)
 
+  const workProjectId = location.pathname.startsWith("/work/")
+    ? decodeURIComponent(location.pathname.slice("/work/".length).split("/")[0] ?? "")
+    : ""
+  const activeProject = workProjectId
+    ? projects.find((project) => project.id === workProjectId) ?? null
+    : null
+
   const openGallery = (project: Project) => {
-    setActiveProject(project)
+    navigate(`/work/${project.id}`)
   }
+
+  const closeGallery = useCallback(() => {
+    navigate("/work")
+  }, [navigate])
+
+  const goAdjacentCollection = useCallback(
+    (delta: number) => {
+      if (!activeProject) return
+      const i = projects.findIndex((p) => p.id === activeProject.id)
+      if (i < 0) return
+      const next = projects[(i + delta + projects.length) % projects.length]
+      if (next) navigate(`/work/${next.id}`)
+    },
+    [activeProject, navigate],
+  )
 
   const openLightbox = (src: string, all: string[]) => {
     const index = all.indexOf(src)
@@ -1271,18 +1518,18 @@ export default function App() {
         if (e.key === "Escape") setLightbox(null)
         return
       }
-      if (activeProject && e.key === "Escape") setActiveProject(null)
+      if (activeProject && e.key === "Escape") closeGallery()
     }
     window.addEventListener("keydown", onKey)
     return () => window.removeEventListener("keydown", onKey)
-  }, [lightbox, activeProject, prevImage, nextImage])
+  }, [lightbox, activeProject, prevImage, nextImage, closeGallery])
 
   useEffect(() => {
-    document.body.style.overflow = lightbox ? "hidden" : ""
+    document.body.style.overflow = lightbox || activeProject ? "hidden" : ""
     return () => {
       document.body.style.overflow = ""
     }
-  }, [lightbox])
+  }, [lightbox, activeProject])
 
   useEffect(() => {
     const about = location.pathname === "/about"
@@ -1296,15 +1543,36 @@ export default function App() {
   }, [location.pathname])
 
   return (
-    <div className={`min-h-[100dvh] ${location.pathname === "/about" ? "bg-ink text-paper" : "bg-paper text-ink"}`}>
+    <div
+      className={`flex flex-col ${
+        location.pathname === "/about"
+          ? "min-h-[100dvh] md:h-[100dvh] md:overflow-hidden bg-ink text-paper"
+          : location.pathname === "/consultancy"
+            ? "min-h-[100dvh] md:h-[100dvh] md:overflow-hidden bg-paper text-ink"
+            : "min-h-[100dvh] bg-paper text-ink"
+      }`}
+    >
       <Nav />
 
-      <main>
+      <main className="flex-1 flex flex-col min-h-0">
         <Routes>
           <Route path="/" element={<LandingView />} />
           <Route path="/about" element={<AboutView />} />
           <Route
             path="/work"
+            element={
+              <WorkSection
+                mode={workMode}
+                activeCategory={activeCategory}
+                onWorkMode={setWorkMode}
+                onCategory={setActiveCategory}
+                onOpen={openGallery}
+                onLightbox={openLightbox}
+              />
+            }
+          />
+          <Route
+            path="/work/:projectId"
             element={
               <WorkSection
                 mode={workMode}
@@ -1322,11 +1590,14 @@ export default function App() {
         </Routes>
       </main>
 
+      <SiteFooter />
+
       {activeProject && (
         <GalleryOverlay
           project={activeProject}
-          onClose={() => setActiveProject(null)}
-          onLightbox={openLightbox}
+          onClose={closeGallery}
+          onPrevCollection={() => goAdjacentCollection(-1)}
+          onNextCollection={() => goAdjacentCollection(1)}
         />
       )}
 
