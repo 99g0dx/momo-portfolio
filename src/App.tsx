@@ -307,7 +307,7 @@ function Nav() {
     }`
 
   const desktopLinkCls = (active: boolean) =>
-    `font-sans text-[8px] tracking-[0.1em] uppercase whitespace-nowrap transition-opacity font-medium ${
+    `font-sans text-[9px] tracking-[0.14em] uppercase whitespace-nowrap transition-opacity font-medium ${
       isAbout
         ? active
           ? "text-paper"
@@ -860,19 +860,19 @@ function LandingView() {
   return (
     <Section
       id="home"
-      className="flex-1 flex items-center justify-center bg-paper px-5 sm:px-8 lg:px-12 min-h-0"
+      className="flex-1 flex items-center justify-center bg-paper px-6 sm:px-10 min-h-0 pt-[var(--header-h)]"
     >
-      <div className="max-w-3xl mx-auto text-center animate-fade-up w-full">
+      <div className="max-w-lg mx-auto text-center animate-fade-up w-full">
         <img
           src={LOGO}
           alt=""
-          className="mx-auto h-[clamp(2rem,11vw,4.75rem)] md:h-[clamp(3.25rem,7vw,6.5rem)] w-auto max-w-[min(15rem,80vw)] md:max-w-[min(24rem,48vw)] object-contain"
+          className="mx-auto h-[clamp(1.65rem,4.6vw,2.85rem)] w-auto max-w-[min(11.5rem,52vw)] object-contain"
         />
-        <h1 className="mt-4 sm:mt-5 font-display text-[clamp(1.85rem,8vw,3.75rem)] tracking-[-0.02em] font-semibold text-ink leading-[1.1] uppercase break-words">
+        <h1 className="mt-5 font-display text-[clamp(1.15rem,2.4vw+0.4rem,1.7rem)] tracking-[0.14em] font-medium text-ink leading-none uppercase whitespace-nowrap">
           Momo Hassan-Odukale
         </h1>
-        <p className="mt-3 font-sans text-[10px] sm:text-[12px] leading-[1.5] text-ink/50 font-light max-w-md mx-auto px-1">
-          Momo Hassan-Odukale is a stylist, creative director, and consultant.
+        <p className="mt-3.5 font-sans text-[9px] sm:text-[10px] tracking-[0.18em] uppercase text-ink/40 font-medium">
+          Stylist · Creative Director · Consultant
         </p>
       </div>
     </Section>
@@ -1281,6 +1281,7 @@ function ContactView() {
 function SiteFooter() {
   const location = useLocation()
   const onInk = location.pathname === "/about"
+  const isHome = location.pathname === "/"
 
   return (
     <div
@@ -1296,19 +1297,21 @@ function SiteFooter() {
           {LOCATION}
         </p>
       </div>
-      <div className="flex flex-wrap gap-x-4 gap-y-1 min-w-0">
-        {PAGES.map((item) => (
-          <Link
-            key={item.id}
-            to={item.path}
-            className={`font-sans text-[9px] tracking-wider transition-colors ${
-              onInk ? "text-paper/45 hover:text-paper" : "text-ink-muted hover:text-ink"
-            }`}
-          >
-            {item.label}
-          </Link>
-        ))}
-      </div>
+      {isHome ? null : (
+        <div className="flex flex-wrap gap-x-4 gap-y-1 min-w-0">
+          {PAGES.map((item) => (
+            <Link
+              key={item.id}
+              to={item.path}
+              className={`font-sans text-[9px] tracking-wider transition-colors ${
+                onInk ? "text-paper/45 hover:text-paper" : "text-ink-muted hover:text-ink"
+              }`}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
@@ -1547,7 +1550,7 @@ export default function App() {
       className={`flex flex-col ${
         location.pathname === "/about"
           ? "min-h-[100dvh] md:h-[100dvh] md:overflow-hidden bg-ink text-paper"
-          : location.pathname === "/consultancy"
+          : location.pathname === "/consultancy" || location.pathname === "/"
             ? "min-h-[100dvh] md:h-[100dvh] md:overflow-hidden bg-paper text-ink"
             : "min-h-[100dvh] bg-paper text-ink"
       }`}
