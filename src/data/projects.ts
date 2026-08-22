@@ -133,7 +133,7 @@ export const projects: Project[] = [
     client: "Lagos Fashion Week",
     description: "Editorial",
     coverImage: "/images/lfw-zine/01-thumb.webp",
-    images: ["/images/lfw-zine/01-full.webp"],
+    images: ["/images/lfw-zine/01-full.webp", "/images/lfw-zine/02-full.webp"],
   },
   {
     id: "nike-wafcon-2026",
