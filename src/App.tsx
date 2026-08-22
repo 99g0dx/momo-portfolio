@@ -28,7 +28,7 @@ const BIO = [
 ]
 const SERVICES = ["Creative Direction", "Styling"]
 const ABOUT_IMAGE = "/images/momo-about.png"
-const LOGO = "/images/momo-logo-line.png"
+const LOGO = "/images/momo-logo-mark-2400px.png"
 
 type PageId = "home" | "work" | "about" | "gida" | "consultancy" | "contact"
 type WorkMode = "grid" | "list" | "index"
@@ -860,18 +860,18 @@ function LandingView() {
   return (
     <Section
       id="home"
-      className="flex-1 flex items-center justify-center bg-paper px-6 sm:px-10 min-h-0 pt-[var(--header-h)]"
+      className="flex-1 flex flex-col items-center justify-center bg-paper px-5 sm:px-8 min-h-0 pt-[var(--header-h)] pb-2"
     >
-      <div className="max-w-lg mx-auto text-center animate-fade-up w-full">
+      <div className="flex flex-1 flex-col items-center justify-center w-full max-w-5xl mx-auto text-center animate-fade-up min-h-0">
         <img
           src={LOGO}
           alt=""
-          className="mx-auto h-[clamp(1.65rem,4.6vw,2.85rem)] w-auto max-w-[min(11.5rem,52vw)] object-contain"
+          className="mx-auto w-auto max-w-[min(92vw,38rem)] h-[clamp(5.5rem,52vh,20rem)] md:h-[clamp(7rem,58vh,24rem)] object-contain"
         />
-        <h1 className="mt-5 font-display text-[clamp(1.15rem,2.4vw+0.4rem,1.7rem)] tracking-[0.14em] font-medium text-ink leading-none uppercase whitespace-nowrap">
+        <h1 className="mt-2 sm:mt-2.5 font-display text-[clamp(0.85rem,1.8vw+0.35rem,1.25rem)] tracking-[0.16em] font-medium text-ink leading-none uppercase whitespace-nowrap">
           Momo Hassan-Odukale
         </h1>
-        <p className="mt-3.5 font-sans text-[9px] sm:text-[10px] tracking-[0.18em] uppercase text-ink/40 font-medium">
+        <p className="mt-1.5 font-sans text-[8px] sm:text-[9px] tracking-[0.2em] uppercase text-ink/35 font-medium">
           Stylist · Creative Director · Consultant
         </p>
       </div>
@@ -1130,24 +1130,15 @@ function ConsultancyView() {
           <p className="font-sans text-[12px] sm:text-[13px] leading-[1.6] text-ink/70 mb-4 sm:mb-5 md:mb-4 max-w-md font-normal">
             Momo offers the following services for brands, artists, and cultural institutions:
           </p>
-          <ul className="border-t border-ink/15">
+          <ul className="space-y-4 sm:space-y-5 md:space-y-4">
             {services.map((service) => (
-              <li
-                key={service.name}
-                className="grid grid-cols-[0.9rem_1fr] sm:grid-cols-[1.25rem_1fr] gap-3 sm:gap-4 py-2 sm:py-2.5 md:py-2 border-b border-ink/10"
-              >
-                <span
-                  aria-hidden="true"
-                  className="mt-[0.55rem] sm:mt-[0.7rem] h-px w-3 sm:w-4 bg-ink/35"
-                />
-                <div>
-                  <h2 className="font-display font-semibold text-[16px] sm:text-[20px] md:text-[17px] tracking-[-0.02em] text-ink mb-0.5 leading-snug">
-                    {service.name}
-                  </h2>
-                  <p className="font-sans text-[12px] sm:text-[13px] leading-[1.6] md:leading-[1.5] text-ink/68 font-normal max-w-md">
-                    {service.description}
-                  </p>
-                </div>
+              <li key={service.name}>
+                <h2 className="font-display font-semibold text-[16px] sm:text-[20px] md:text-[17px] tracking-[-0.02em] text-ink mb-0.5 leading-snug">
+                  {service.name}
+                </h2>
+                <p className="font-sans text-[12px] sm:text-[13px] leading-[1.6] md:leading-[1.5] text-ink/68 font-normal max-w-md">
+                  {service.description}
+                </p>
               </li>
             ))}
           </ul>
