@@ -17,11 +17,11 @@ export const projects: Project[] = [
     year: "2026",
     client: "KADIJU",
     description: "Editorial",
-    coverImage: "/images/kadiju-last-gesture/03.jpg",
+    coverImage: "/images/kadiju-last-gesture/03-thumb.webp",
     images: [
-      "/images/kadiju-last-gesture/03.jpg",
-      "/images/kadiju-last-gesture/01.jpg",
-      "/images/kadiju-last-gesture/02.jpg",
+      "/images/kadiju-last-gesture/03-full.webp",
+      "/images/kadiju-last-gesture/01-full.webp",
+      "/images/kadiju-last-gesture/02-full.webp",
     ],
   },
   {
@@ -30,8 +30,11 @@ export const projects: Project[] = [
     category: "Styling",
     year: "2025",
     description: "Editorial",
-    coverImage: "/images/the-audition-2025/01.jpg",
-    images: ["/images/the-audition-2025/01.jpg", "/images/the-audition-2025/02.jpg"],
+    coverImage: "/images/the-audition-2025/01-thumb.webp",
+    images: [
+      "/images/the-audition-2025/01-full.webp",
+      "/images/the-audition-2025/02-full.webp",
+    ],
   },
   {
     id: "heatwave-2025",
@@ -40,8 +43,8 @@ export const projects: Project[] = [
     year: "2025",
     client: "Heatwave",
     description: "Editorial",
-    coverImage: "/images/heatwave/01.jpg",
-    images: ["/images/heatwave/01.jpg", "/images/heatwave/02.jpg"],
+    coverImage: "/images/heatwave/01-thumb.webp",
+    images: ["/images/heatwave/01-full.webp", "/images/heatwave/02-full.webp"],
   },
   {
     id: "farfetch-2021",
@@ -50,8 +53,8 @@ export const projects: Project[] = [
     year: "2021",
     client: "Farfetch",
     description: "Editorial",
-    coverImage: "/images/farfetch/01.jpg",
-    images: ["/images/farfetch/01.jpg", "/images/farfetch/02.jpg"],
+    coverImage: "/images/farfetch/01-thumb.webp",
+    images: ["/images/farfetch/01-full.webp", "/images/farfetch/02-full.webp"],
   },
   {
     id: "krucible-2025",
@@ -60,8 +63,8 @@ export const projects: Project[] = [
     year: "2025",
     client: "Krucible",
     description: "Editorial",
-    coverImage: "/images/krucible/01.jpg",
-    images: ["/images/krucible/01.jpg", "/images/krucible/02.jpg"],
+    coverImage: "/images/krucible/01-thumb.webp",
+    images: ["/images/krucible/01-full.webp", "/images/krucible/02-full.webp"],
   },
   {
     id: "lisa-folawiyo-coll-1-2024",
@@ -70,8 +73,11 @@ export const projects: Project[] = [
     year: "2024",
     client: "Lisa Folawiyo",
     description: "Runway",
-    coverImage: "/images/lisa-folawiyo-coll-1/01.jpg",
-    images: ["/images/lisa-folawiyo-coll-1/01.jpg", "/images/lisa-folawiyo-coll-1/02.jpg"],
+    coverImage: "/images/lisa-folawiyo-coll-1/01-thumb.webp",
+    images: [
+      "/images/lisa-folawiyo-coll-1/01-full.webp",
+      "/images/lisa-folawiyo-coll-1/02-full.webp",
+    ],
   },
   {
     id: "davido-5ive-album-2025",
@@ -80,11 +86,11 @@ export const projects: Project[] = [
     year: "2025",
     client: "Davido",
     description: "Editorial",
-    coverImage: "/images/davido-5ive-album/01.jpg",
+    coverImage: "/images/davido-5ive-album/01-thumb.webp",
     images: [
-      "/images/davido-5ive-album/01.jpg",
-      "/images/davido-5ive-album/02.jpg",
-      "/images/davido-5ive-album/03.jpg",
+      "/images/davido-5ive-album/01-full.webp",
+      "/images/davido-5ive-album/02-full.webp",
+      "/images/davido-5ive-album/03-full.webp",
     ],
   },
   {
@@ -94,8 +100,8 @@ export const projects: Project[] = [
     year: "2024",
     client: "GQ South Africa",
     description: "Editorial",
-    coverImage: "/images/asa-gq-cover/01.jpg",
-    images: ["/images/asa-gq-cover/01.jpg", "/images/asa-gq-cover/02.png"],
+    coverImage: "/images/asa-gq-cover/01-thumb.webp",
+    images: ["/images/asa-gq-cover/01-full.webp", "/images/asa-gq-cover/02-full.webp"],
   },
   {
     id: "native-magazine-2022",
@@ -104,8 +110,8 @@ export const projects: Project[] = [
     year: "2022",
     client: "The Native",
     description: "Editorial",
-    coverImage: "/images/native-magazine/01.jpg",
-    images: ["/images/native-magazine/01.jpg"],
+    coverImage: "/images/native-magazine/01-thumb.webp",
+    images: ["/images/native-magazine/01-full.webp"],
   },
   {
     id: "lesson-teacher-2022",
@@ -113,8 +119,11 @@ export const projects: Project[] = [
     category: "Styling",
     year: "2022",
     description: "Editorial",
-    coverImage: "/images/lesson-teacher/01.jpg",
-    images: ["/images/lesson-teacher/01.jpg", "/images/lesson-teacher/02.jpg"],
+    coverImage: "/images/lesson-teacher/01-thumb.webp",
+    images: [
+      "/images/lesson-teacher/01-full.webp",
+      "/images/lesson-teacher/02-full.webp",
+    ],
   },
   {
     id: "lfw-zine-2020",
@@ -123,8 +132,8 @@ export const projects: Project[] = [
     year: "2020",
     client: "Lagos Fashion Week",
     description: "Editorial",
-    coverImage: "/images/lfw-zine/01.jpg",
-    images: ["/images/lfw-zine/01.jpg"],
+    coverImage: "/images/lfw-zine/01-thumb.webp",
+    images: ["/images/lfw-zine/01-full.webp"],
   },
   {
     id: "nike-wafcon-2026",
@@ -133,11 +142,11 @@ export const projects: Project[] = [
     year: "2026",
     client: "Nike",
     description: "Editorial",
-    coverImage: "/images/nike-wafcon/01.jpg",
+    coverImage: "/images/nike-wafcon/01-thumb.webp",
     images: [
-      "/images/nike-wafcon/01.jpg",
-      "/images/nike-wafcon/02.jpg",
-      "/images/nike-wafcon/03.jpg",
+      "/images/nike-wafcon/01-full.webp",
+      "/images/nike-wafcon/02-full.webp",
+      "/images/nike-wafcon/03-full.webp",
     ],
   },
   {
@@ -147,7 +156,12 @@ export const projects: Project[] = [
     year: "2023",
     client: "NOCTA",
     description: "Campaign",
-    coverImage: "/images/nocta/01.jpg",
-    images: ["/images/nocta/01.jpg", "/images/nocta/02.jpg"],
+    coverImage: "/images/nocta/01-thumb.webp",
+    images: ["/images/nocta/01-full.webp", "/images/nocta/02-full.webp"],
   },
 ]
+
+/** Grid / index thumbs from a full gallery path. */
+export function thumbFromFull(src: string) {
+  return src.replace(/-full\.webp$/, "-thumb.webp")
+}

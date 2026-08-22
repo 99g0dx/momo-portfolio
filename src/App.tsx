@@ -9,7 +9,7 @@ import {
   type MouseEvent,
 } from "react"
 import { Link, NavLink, Route, Routes, useLocation, useNavigate } from "react-router-dom"
-import { projects, type Project } from "./data/projects"
+import { projects, thumbFromFull, type Project } from "./data/projects"
 import {
   gidaAbout,
   gidaInstagram,
@@ -415,8 +415,8 @@ function WorkGrid({ filtered, onOpen }: { filtered: Project[]; onOpen: (p: Proje
         >
           <div className="overflow-hidden bg-ink/8 mb-2 sm:mb-2.5 w-full aspect-[3/4]">
             <FadeImg
-              src={imgUrl(p.coverImage, 600)}
-              srcSet={`${imgUrl(p.coverImage, 400)} 400w, ${imgUrl(p.coverImage, 700)} 700w, ${imgUrl(p.coverImage, 1000)} 1000w`}
+              src={p.coverImage}
+              srcSet={`${p.coverImage} 1000w`}
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
               alt={p.title}
               className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04] group-active:scale-[1.02]"
@@ -459,7 +459,7 @@ function WorkList({ filtered, onOpen }: { filtered: Project[]; onOpen: (p: Proje
             <div
               className="absolute inset-0 bg-cover bg-center pointer-events-none transition-opacity duration-300 hidden sm:block"
               style={{
-                backgroundImage: `url(${imgUrl(p.coverImage, 1400)})`,
+                backgroundImage: `url(${p.coverImage})`,
                 opacity: active ? 0.13 : 0,
               }}
             />
@@ -521,8 +521,8 @@ function WorkIndex({
                 className="group aspect-square overflow-hidden bg-ink/8"
               >
                 <FadeImg
-                  src={imgUrl(src, 300, 300)}
-                  srcSet={`${imgUrl(src, 200, 200)} 200w, ${imgUrl(src, 400, 400)} 400w`}
+                  src={thumbFromFull(src)}
+                  srcSet={`${thumbFromFull(src)} 400w`}
                   sizes="(max-width: 640px) 33vw, (max-width: 1024px) 25vw, 16vw"
                   alt={`${p.title} ${i + 1}`}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.06] group-active:scale-[1.03]"
@@ -1382,9 +1382,7 @@ function Lightbox({
       >
         <FadeImg
           key={images[index]}
-          src={`${images[index]?.split("?")[0]}?w=1600&fit=max&auto=format&q=85`}
-          srcSet={`${images[index]?.split("?")[0]}?w=800&fit=max&auto=format&q=80 800w, ${images[index]?.split("?")[0]}?w=1600&fit=max&auto=format&q=85 1600w`}
-          sizes="100vw"
+          src={images[index] ?? ""}
           alt={`Image ${index + 1}`}
           className="w-full h-full max-w-full max-h-full object-contain select-none animate-scale-in !h-full"
           loading="eager"
