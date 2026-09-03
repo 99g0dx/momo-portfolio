@@ -7,7 +7,7 @@ export const gidaAbout = {
   founder: "",
   paragraphs: [
     "GIDA Journal is a print and digital platform documenting contemporary creative culture across Africa, founded by Momo Hassan-Odukale in 2022. Each volume centers a different region, with a focus on archiving the people, movements, and histories shaping African creative industries today. Beyond print, GIDA consults on projects with brands such as ART X Lagos, where it produced and curated their 10th anniversary magazine, alongside live programming such as roundtable conversations and pop-up activations in cities including Lagos, London, Cape Town, Nairobi, Marrakesh, and more.",
-    "GIDA has partnered with brands including Homecoming, MTN, Accor, Chanel, and Leadway Assurance, across sponsorship, editorial collaboration, and brand consultancy.",
+    "GIDA has partnered with brands including Homecoming, MTN, Accor, Nike, and Leadway Assurance, across sponsorship, editorial collaboration, and brand consultancy.",
   ],
 }
 

@@ -17,10 +17,10 @@ export const projects: Project[] = [
     year: "2026",
     client: "KADIJU",
     description: "Editorial",
-    coverImage: "/images/kadiju-last-gesture/03-thumb.webp",
+    coverImage: "/images/kadiju-last-gesture/01-thumb.webp",
     images: [
-      "/images/kadiju-last-gesture/03-full.webp",
       "/images/kadiju-last-gesture/01-full.webp",
+      "/images/kadiju-last-gesture/03-full.webp",
       "/images/kadiju-last-gesture/02-full.webp",
     ],
   },

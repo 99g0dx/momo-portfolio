@@ -27,7 +27,7 @@ const BIO = [
   "Momo Hassan-Odukale is a stylist, creative director, and consultant based between London and Lagos, working at the intersection of fashion, history, and storytelling. She is the founder of GIDA Journal, a print publication documenting creative culture across Africa. Her work spans campaigns for Nike, Bottega Veneta, IAMISIGO, Lisa Folawiyo Studio, and Guinness, costume design for artists including Asake, ASA, Mr Eazi, and Temi Otedola, and editorial features in Vogue and Dazed.",
 ]
 const SERVICES = ["Creative Direction", "Styling"]
-const ABOUT_IMAGE = "/images/momo-about.png"
+const ABOUT_IMAGE = "/images/IMG_7542-full.webp"
 const LOGO = "/images/momo-logo-mark-2400px.png"
 
 type PageId = "home" | "work" | "about" | "gida" | "consultancy" | "contact"
@@ -1157,112 +1157,57 @@ function ConsultancyView() {
 
 // ─── Contact View ─────────────────────────────────────────────────────────────
 function ContactView() {
-  const [sent, setSent] = useState(false)
-
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const data = new FormData(e.currentTarget)
-    const name = String(data.get("name") || "")
-    const email = String(data.get("email") || "")
-    const message = String(data.get("message") || "")
-    const subject = encodeURIComponent(`Enquiry from ${name || "website"}`)
-    const body = encodeURIComponent(`${message}\n\n— ${name}\n${email}`)
-    window.location.href = `mailto:${EMAIL}?subject=${subject}&body=${body}`
-    setSent(true)
-  }
-
   return (
     <Section
       id="contact"
-      className="flex flex-col flex-1 min-h-0 bg-paper md:overflow-hidden pt-[calc(var(--header-h)+1.25rem)] pb-6"
+      className="relative flex flex-col flex-1 min-h-0 overflow-hidden bg-paper pt-[var(--header-h)]"
     >
-      <div className="px-5 sm:px-8 lg:px-12 py-6 sm:py-8 md:flex-1 md:flex md:items-center">
-        <div className="max-w-xl mx-auto w-full">
-          <p className="font-sans text-[10px] tracking-[0.18em] uppercase text-ink-muted mb-3 sm:mb-4 font-medium">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_20%_0%,rgba(12,12,10,0.06),transparent_55%),radial-gradient(ellipse_at_90%_80%,rgba(12,12,10,0.04),transparent_50%)]"
+      />
+
+      <div className="relative z-10 flex flex-1 flex-col justify-center px-5 sm:px-8 lg:px-12 py-10 sm:py-12 pb-[max(2.5rem,env(safe-area-inset-bottom))]">
+        <div className="w-full max-w-3xl mx-auto md:mx-0 md:pl-[min(4vw,2.5rem)] animate-fade-up">
+          <p className="font-sans text-[10px] tracking-[0.22em] uppercase text-ink-muted font-medium">
             Contact
           </p>
-          <h1 className="font-display font-semibold text-[clamp(1.75rem,5vw,2.6rem)] tracking-[-0.02em] text-ink mb-3 leading-[1.05]">
-            Get in touch
-          </h1>
-          <p className="font-sans text-[12px] sm:text-[13px] leading-[1.6] text-ink/70 mb-6 sm:mb-7 max-w-md font-normal">
-            For commissions, GIDA, consultancy, or press — send a note or reach out on Instagram.
+          <p className="mt-5 sm:mt-6 font-sans text-[13px] sm:text-[15px] leading-[1.65] text-ink/65 font-normal max-w-sm">
+            For project discussions, commissions, or representation, reach out below.
           </p>
 
-          <form onSubmit={onSubmit} className="space-y-3 sm:space-y-4 mb-6 sm:mb-7">
-            <div className="grid sm:grid-cols-2 gap-3 sm:gap-6">
-              <label className="block">
-                <span className="font-sans text-[9px] sm:text-[10px] tracking-[0.16em] uppercase text-ink-muted font-medium">
-                  Name
-                </span>
-                <input
-                  name="name"
-                  required
-                  className="mt-1 w-full min-h-8 bg-transparent border-0 border-b border-ink/10 py-1 font-sans text-[12px] sm:text-[13px] leading-[1.6] font-normal text-ink outline-none focus:border-ink/40 transition-colors"
-                />
-              </label>
-              <label className="block">
-                <span className="font-sans text-[9px] sm:text-[10px] tracking-[0.16em] uppercase text-ink-muted font-medium">
-                  Email
-                </span>
-                <input
-                  name="email"
-                  type="email"
-                  required
-                  className="mt-1 w-full min-h-8 bg-transparent border-0 border-b border-ink/10 py-1 font-sans text-[12px] sm:text-[13px] leading-[1.6] font-normal text-ink outline-none focus:border-ink/40 transition-colors"
-                />
-              </label>
-            </div>
-            <label className="block">
-              <span className="font-sans text-[9px] sm:text-[10px] tracking-[0.16em] uppercase text-ink-muted font-medium">
-                Message
-              </span>
-              <textarea
-                name="message"
-                required
-                rows={2}
-                className="mt-1 w-full bg-transparent border-0 border-b border-ink/10 py-1 font-sans text-[12px] sm:text-[13px] leading-[1.6] font-normal text-ink outline-none focus:border-ink/40 transition-colors resize-none min-h-[2.75rem]"
-              />
-            </label>
-            <button
-              type="submit"
-              className="mt-1 inline-flex items-center justify-center px-3.5 py-1.5 border border-ink font-sans text-[9px] tracking-[0.2em] uppercase text-ink hover:bg-ink hover:text-paper transition-colors duration-200"
+          <div className="mt-10 sm:mt-12 flex flex-col gap-5 sm:gap-6">
+            <a
+              href={`mailto:${EMAIL}`}
+              className="group w-fit max-w-full font-display font-semibold text-[clamp(1.35rem,3.8vw,2.75rem)] tracking-[-0.02em] text-ink leading-[1.1] break-all sm:break-normal transition-opacity"
             >
-              {sent ? "Opening mail…" : "Send message →"}
-            </button>
-          </form>
-
-          <div className="mt-12 sm:mt-16 space-y-3 sm:space-y-4">
-            <div>
-              <p className="font-sans text-[10px] tracking-[0.16em] uppercase text-ink-muted mb-2 font-medium">
-                Email
-              </p>
+              <span className="block">{EMAIL.toLowerCase()}</span>
+              <span
+                aria-hidden="true"
+                className="mt-2 block h-px origin-left scale-x-[0.35] bg-ink/55 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100 group-hover:bg-ink"
+              />
+            </a>
+            {SOCIAL.map((item, i) => (
               <a
-                href={`mailto:${EMAIL}`}
-                className="font-sans text-[12px] sm:text-[13px] leading-[1.6] font-normal text-ink hover:opacity-45 transition-opacity"
+                key={item.handle}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group w-fit font-display font-semibold text-[clamp(1.35rem,3.8vw,2.75rem)] tracking-[-0.02em] text-ink leading-[1.1] transition-opacity"
+                style={{ animationDelay: `${(i + 1) * 80}ms` }}
               >
-                {EMAIL}
+                <span className="block">{item.handle.toLowerCase()}</span>
+                <span
+                  aria-hidden="true"
+                  className="mt-2 block h-px origin-left scale-x-[0.35] bg-ink/55 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100 group-hover:bg-ink"
+                />
               </a>
-            </div>
-            <div>
-              <p className="font-sans text-[10px] tracking-[0.16em] uppercase text-ink-muted mb-3 font-medium">
-                Socials
-              </p>
-              <ul className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-2">
-                {SOCIAL.map((item) => (
-                  <li key={item.handle}>
-                    <a
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-sans text-[12px] sm:text-[13px] leading-[1.6] font-normal text-ink hover:opacity-45 transition-opacity"
-                    >
-                      @{item.handle}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            ))}
           </div>
+
+          <p className="mt-14 sm:mt-16 font-sans text-[10px] tracking-[0.18em] uppercase text-ink/35 font-medium">
+            {LOCATION}
+          </p>
         </div>
       </div>
     </Section>
@@ -1539,7 +1484,9 @@ export default function App() {
       className={`flex flex-col ${
         location.pathname === "/about"
           ? "min-h-[100dvh] md:h-[100dvh] md:overflow-hidden bg-ink text-paper"
-          : location.pathname === "/consultancy" || location.pathname === "/"
+          : location.pathname === "/consultancy" ||
+              location.pathname === "/contact" ||
+              location.pathname === "/"
             ? "min-h-[100dvh] md:h-[100dvh] md:overflow-hidden bg-paper text-ink"
             : "min-h-[100dvh] bg-paper text-ink"
       }`}
