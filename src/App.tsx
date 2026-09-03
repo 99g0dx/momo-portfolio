@@ -297,6 +297,10 @@ function Nav() {
 
   const isAbout = location.pathname === "/about"
   const isHome = location.pathname === "/"
+  const headerOpaque =
+    location.pathname === "/work" ||
+    location.pathname.startsWith("/work/") ||
+    location.pathname === "/gida"
 
   const menuItemCls = (active: boolean) =>
     `block w-full text-left font-sans text-[11px] tracking-[0.16em] uppercase px-3 py-2 border-b transition-opacity font-medium ${
@@ -306,7 +310,7 @@ function Nav() {
     }`
 
   const desktopLinkCls = (active: boolean) =>
-    `font-sans text-[9px] tracking-[0.14em] uppercase whitespace-nowrap transition-opacity font-medium ${
+    `font-sans text-[11px] tracking-[0.14em] uppercase whitespace-nowrap transition-opacity font-medium ${
       isAbout
         ? active
           ? "text-paper"
@@ -321,7 +325,7 @@ function Nav() {
       <header
         ref={headerRef}
         className={`fixed top-0 left-0 right-0 z-50 pt-[env(safe-area-inset-top,0px)] ${
-          isAbout ? "bg-ink" : "bg-paper"
+          isAbout ? "bg-ink" : headerOpaque ? "bg-paper" : "bg-transparent"
         }`}
       >
         <div className="relative flex items-center justify-end px-4 sm:px-6 md:px-8 py-2.5 sm:py-3">
