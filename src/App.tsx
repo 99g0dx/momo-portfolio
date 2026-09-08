@@ -891,16 +891,16 @@ function AboutView() {
       className="bg-ink flex-1 min-h-0 overflow-hidden flex flex-col pt-[var(--header-h)] md:pt-0"
     >
       <div className="flex-1 min-h-0 flex flex-col md:flex-row">
-        <div className="order-1 md:order-2 w-full flex-1 min-h-0 md:flex-none md:w-1/2 md:h-full md:shrink-0 overflow-hidden">
+        <div className="order-1 md:order-2 w-full flex-1 min-h-0 md:flex-none md:w-[42%] lg:w-[38%] md:h-full md:shrink-0 overflow-hidden md:flex md:items-center md:justify-center md:px-8 lg:px-10 md:pt-[var(--header-h)] md:pb-10">
           <FadeImg
             src={ABOUT_IMAGE}
             alt={NAME}
-            className="w-full h-full object-cover object-center"
+            className="w-full h-full md:h-auto md:max-h-[min(78dvh,36rem)] md:w-full object-cover object-center"
             loading="lazy"
           />
         </div>
 
-        <div className="order-2 md:order-1 shrink-0 md:flex-1 md:w-1/2 md:h-full md:min-h-0 flex flex-col justify-end md:justify-center md:overflow-hidden px-5 sm:px-8 md:px-14 lg:px-16 py-4 sm:py-6 md:py-0 md:pt-[var(--header-h)]">
+        <div className="order-2 md:order-1 shrink-0 md:flex-1 md:min-h-0 flex flex-col justify-end md:justify-center md:overflow-hidden px-5 sm:px-8 md:px-14 lg:px-16 py-4 sm:py-6 md:py-0 md:pt-[var(--header-h)]">
           <div className="max-w-md md:max-w-sm">
             {BIO.map((para, i) => (
               <p
@@ -1180,31 +1180,22 @@ function ContactView() {
             For project discussions, commissions, or representation, reach out below.
           </p>
 
-          <div className="mt-10 sm:mt-12 flex flex-col gap-5 sm:gap-6">
+          <div className="mt-10 sm:mt-12 flex flex-col gap-3 sm:gap-3.5">
             <a
               href={`mailto:${EMAIL}`}
-              className="group w-fit max-w-full font-display font-semibold text-[clamp(1.35rem,3.8vw,2.75rem)] tracking-[-0.02em] text-ink leading-[1.1] break-all sm:break-normal transition-opacity"
+              className="w-fit max-w-full font-display font-semibold text-[clamp(1.05rem,2.2vw,1.35rem)] tracking-[-0.02em] text-ink leading-[1.2] break-all sm:break-normal hover:opacity-55 transition-opacity"
             >
-              <span className="block">{EMAIL.toLowerCase()}</span>
-              <span
-                aria-hidden="true"
-                className="mt-2 block h-px origin-left scale-x-[0.35] bg-ink/55 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100 group-hover:bg-ink"
-              />
+              {EMAIL.toLowerCase()}
             </a>
-            {SOCIAL.map((item, i) => (
+            {SOCIAL.map((item) => (
               <a
                 key={item.handle}
                 href={item.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group w-fit font-display font-semibold text-[clamp(1.35rem,3.8vw,2.75rem)] tracking-[-0.02em] text-ink leading-[1.1] transition-opacity"
-                style={{ animationDelay: `${(i + 1) * 80}ms` }}
+                className="w-fit font-display font-semibold text-[clamp(1.05rem,2.2vw,1.35rem)] tracking-[-0.02em] text-ink leading-[1.2] hover:opacity-55 transition-opacity"
               >
-                <span className="block">{item.handle.toLowerCase()}</span>
-                <span
-                  aria-hidden="true"
-                  className="mt-2 block h-px origin-left scale-x-[0.35] bg-ink/55 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100 group-hover:bg-ink"
-                />
+                {item.handle.toLowerCase()}
               </a>
             ))}
           </div>
