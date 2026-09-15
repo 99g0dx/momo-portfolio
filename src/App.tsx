@@ -888,29 +888,29 @@ function AboutView() {
   return (
     <Section
       id="about"
-      className="bg-ink flex-1 min-h-0 overflow-hidden flex flex-col pt-[var(--header-h)] md:pt-0"
+      className="bg-ink flex-1 min-h-0 overflow-hidden flex flex-col pt-[var(--header-h)]"
     >
-      <div className="flex-1 min-h-0 flex flex-col md:flex-row">
-        <div className="order-1 md:order-2 w-full flex-1 min-h-0 md:flex-none md:w-[42%] lg:w-[38%] md:h-full md:shrink-0 overflow-hidden md:flex md:items-center md:justify-center md:px-8 lg:px-10 md:pt-[var(--header-h)] md:pb-10">
+      <div className="flex-1 min-h-0 flex flex-col md:flex-row md:items-center md:justify-center md:gap-10 lg:gap-14 xl:gap-16 px-5 sm:px-8 md:px-10 lg:px-14 py-4 sm:py-6 md:py-8 md:overflow-hidden">
+        <div className="order-1 md:order-2 w-full flex-1 min-h-0 md:flex-none md:w-auto overflow-hidden">
           <FadeImg
             src={ABOUT_IMAGE}
             alt={NAME}
-            className="w-full h-full md:h-auto md:max-h-[min(78dvh,36rem)] md:w-full object-cover object-center"
+            className="w-full h-full md:h-[min(72dvh,38rem)] md:w-auto md:max-w-[min(42vw,28rem)] object-cover object-center"
             loading="lazy"
           />
         </div>
 
-        <div className="order-2 md:order-1 shrink-0 md:flex-1 md:min-h-0 flex flex-col justify-end md:justify-center md:overflow-hidden px-5 sm:px-8 md:px-14 lg:px-16 py-4 sm:py-6 md:py-0 md:pt-[var(--header-h)]">
-          <div className="max-w-md md:max-w-sm">
+        <div className="order-2 md:order-1 shrink-0 md:flex-none w-full md:w-[min(100%,22rem)] lg:w-[24rem] flex flex-col justify-end md:justify-center pt-5 sm:pt-6 md:pt-0">
+          <div>
             {BIO.map((para, i) => (
               <p
                 key={i}
-                className={`font-sans text-[13px] sm:text-[16px] md:text-[13px] leading-[1.7] text-paper/78 font-light ${i > 0 ? "mt-5" : ""}`}
+                className={`font-sans text-[13px] sm:text-[16px] md:text-[13px] lg:text-[14px] leading-[1.7] text-paper/78 font-light ${i > 0 ? "mt-5" : ""}`}
               >
                 {para}
               </p>
             ))}
-            <div className="mt-6 sm:mt-8 md:mt-10 md:pt-0 pt-5 sm:pt-7 border-t border-paper/10 md:border-t-0">
+            <div className="mt-6 sm:mt-8 md:mt-8 pt-5 sm:pt-7 md:pt-0 border-t border-paper/10 md:border-t-0">
               <p className="font-sans text-[10px] tracking-[0.16em] uppercase text-paper/40 mb-2 font-medium">
                 Services
               </p>
