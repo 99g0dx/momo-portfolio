@@ -99,6 +99,8 @@ function FadeImg({
   sizes,
   srcSet,
   onClick,
+  fade = true,
+  fetchPriority,
 }: {
   src: string
   alt: string
@@ -107,8 +109,10 @@ function FadeImg({
   sizes?: string
   srcSet?: string
   onClick?: (e: MouseEvent<HTMLImageElement>) => void
+  fade?: boolean
+  fetchPriority?: "high" | "low" | "auto"
 }) {
-  const [loaded, setLoaded] = useState(false)
+  const [loaded, setLoaded] = useState(!fade)
 
   return (
     <img
@@ -117,10 +121,11 @@ function FadeImg({
       sizes={sizes}
       alt={alt}
       loading={loading}
-      decoding="async"
+      decoding={fade ? "async" : "sync"}
+      fetchPriority={fetchPriority}
       onLoad={() => setLoaded(true)}
       onClick={onClick}
-      className={`img-fade ${loaded ? "is-loaded" : ""} ${className}`}
+      className={`${fade ? `img-fade ${loaded ? "is-loaded" : ""}` : ""} ${className}`.trim()}
     />
   )
 }
@@ -896,7 +901,9 @@ function AboutView() {
             src={ABOUT_IMAGE}
             alt={NAME}
             className="w-full h-full md:h-[min(72dvh,38rem)] md:w-auto md:max-w-[min(42vw,28rem)] object-cover object-center"
-            loading="lazy"
+            loading="eager"
+            fetchPriority="high"
+            fade={false}
           />
         </div>
 
@@ -1436,6 +1443,11 @@ export default function App() {
         index: (current.index + 1) % current.images.length,
       }
     })
+  }, [])
+
+  useEffect(() => {
+    const preload = new Image()
+    preload.src = ABOUT_IMAGE
   }, [])
 
   useEffect(() => {
