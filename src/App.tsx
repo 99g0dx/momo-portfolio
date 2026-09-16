@@ -27,7 +27,7 @@ const BIO = [
   "Momo Hassan-Odukale is a stylist, creative director, and consultant based between London and Lagos, working at the intersection of fashion, history, and storytelling. She is the founder of GIDA Journal, a print publication documenting creative culture across Africa. Her work spans campaigns for Nike, Bottega Veneta, IAMISIGO, Lisa Folawiyo Studio, and Guinness, costume design for artists including Asake, ASA, Mr Eazi, and Temi Otedola, and editorial features in Vogue and Dazed.",
 ]
 const SERVICES = ["Creative Direction", "Styling"]
-const ABOUT_IMAGE = "/images/IMG_7542-full.webp"
+const ABOUT_IMAGE = "/images/IMG_7545-full.webp"
 const LOGO = "/images/momo-logo-mark-2400px.png"
 
 type PageId = "home" | "work" | "about" | "gida" | "consultancy" | "contact"
@@ -900,7 +900,7 @@ function AboutView() {
           <FadeImg
             src={ABOUT_IMAGE}
             alt={NAME}
-            className="w-full h-full md:h-[min(72dvh,38rem)] md:w-auto md:max-w-[min(42vw,28rem)] object-cover object-center"
+            className="w-full h-full md:h-[min(72dvh,38rem)] md:w-auto md:max-w-[min(42vw,28rem)] object-contain object-center"
             loading="eager"
             fetchPriority="high"
             fade={false}
